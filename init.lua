@@ -91,18 +91,22 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
+-- **my custom options**
+-- Make tab = 4 instead of 8
+vim.opt.shiftwidth = 4
+
 -- Make line numbers default
 vim.o.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.o.relativenumber = true
+vim.o.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.o.mouse = 'a'
@@ -168,6 +172,15 @@ vim.o.confirm = true
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
+
+-- ## My First Custom Keymap in Neovim - How Exciting!
+-- Make Ctrl+Backspace work like everything else (delete previous word)
+-- This works, but must use <C-h>, not <C-BS>. No idea why, but konsole is the same way.
+-- -- Make it same as Ctrl+w (delete back to beginning of word) in insert or command mode
+vim.keymap.set('!', '<C-h>', '<C-w>', { desc = 'Ctrl+backspace same as C-w' })
+-- Do the same in normal mode (same as db)
+-- -- Not sure I want this yet, so leaving commented for now.
+-- vim.keymap.set('n', '<C-h>', 'db', { desc = 'Ctrl+backspace same as db' })
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
@@ -238,7 +251,7 @@ rtp:prepend(lazypath)
 --
 --  To check the current status of your plugins, run
 --    :Lazy
---
+
 --  You can press `?` in this menu for help. Use `:q` to close the window
 --
 --  To update plugins you can run
@@ -355,6 +368,7 @@ require('lazy').setup({
   --
   -- The dependencies are proper plugin specifications as well - anything
   -- you do for a plugin at the top level, you can do for a dependency.
+  --
   --
   -- Use the `dependencies` key to specify the dependencies of a particular plugin
 
@@ -675,6 +689,7 @@ require('lazy').setup({
         -- gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
+        -- bashls = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -876,13 +891,56 @@ require('lazy').setup({
     },
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
+  -- colorschemes are loaded and set below.
+  -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+
+  -- **My Custom Colorschemes**
+  -- Load the starting colorscheme on line 957
+  { -- This colorscheme section is for ayu, which is my preferred default.
+    'Luxed/ayu-vim', -- Use the github repo name here, it will pull down what's needed.
+    lazy = false, -- Don't lazy load the default colorscheme.
     priority = 1000, -- Make sure to load this before all the other start plugins.
+    config = function()
+      ---@diagnostic disable-next-line: missing-fields
+
+      -- vim.g.ayucolor = 'mirage' -- optional; default is 'dark'
+      -- vim.g.ayu_italic_comment = 1  -- optional setting; not a fan, so commented out
+      vim.g.ayu_sign_contrast = 0 -- optional setting
+      vim.g.ayu_extended_palette = 1 -- optional setting
+
+      vim.o.background = 'dark' -- this is default; keeping in for documentation
+      -- Load the colorscheme here.
+      vim.cmd.colorscheme 'ayu'
+    end,
+  },
+
+  -- GitHub themes for Neovim
+  { 'projekt0n/github-nvim-theme', name = 'github-theme' },
+
+  { --Neovim Visual Studio Code Theme
+    'askfiy/visual_studio_code',
+    -- priority = 100,
+    -- config = function()
+    --     vim.cmd([[colorscheme visual_studio_code]])
+    -- end,
+  },
+
+  { --OneDark.nvim
+    'navarasu/onedark.nvim',
+    -- priority = 1000,
+    config = function()
+      require('onedark').setup {
+        style = 'darker', --default is 'darker'
+      }
+      -- Enable theme
+      -- require('onedark').load()
+    end,
+  },
+
+  { -- This colorscheme section is for tokyonight. Include it, but don't set it (see line 896)
+    'folke/tokyonight.nvim', -- keep tokyonight; this was the default. Enable only 1 at a time.
+    -- lazy = true, -- Lazy load since this isn't the default colorscheme.
+    -- priority = 1000, -- Make sure to load this before all the other start plugins.
     config = function()
       ---@diagnostic disable-next-line: missing-fields
       require('tokyonight').setup {
@@ -890,16 +948,46 @@ require('lazy').setup({
           comments = { italic = false }, -- Disable italics in comments
         },
       }
-
       -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      -- vim.cmd.colorscheme 'tokyonight-night'
     end,
   },
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
+
+  -- ## Custom statusline
+  -- Trying out a different statusline that integrates with ayu theme.
+  -- Using this requires commenting out the "mini.statusline" in the mini.nvim section (~ line 1000)
+  --
+  { -- This block comes from lualine readme (https://github.com/nvim-lualine/lualine.nvim)
+    'nvim-lualine/lualine.nvim', -- uncomment to enable
+    dependencies = { 'nvim-tree/nvim-web-devicons' }, -- uncomment to enable
+
+    config = function()
+      -- create custom text for lualine status line for inactive windows
+      local function winStatus()
+        return 'INACTIVE'
+      end
+
+      require('lualine').setup {
+
+        -- docs say this isn't needed, but I had to add it at first.
+        -- options = { theme = 'ayu' },
+
+        -- customize the status line on inactive windows
+        -- see "winStatus" function above
+        inactive_sections = {
+          lualine_a = { winStatus, 'filename' },
+          lualine_b = {},
+          lualine_c = {},
+          lualine_x = {},
+          lualine_y = {},
+          lualine_z = { 'location' },
+        },
+      }
+    end,
+  },
 
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
@@ -922,17 +1010,19 @@ require('lazy').setup({
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
-      local statusline = require 'mini.statusline'
-      -- set use_icons to true if you have a Nerd Font
-      statusline.setup { use_icons = vim.g.have_nerd_font }
-
-      -- You can configure sections in the statusline by overriding their
-      -- default behavior. For example, here we set the section for
-      -- cursor location to LINE:COLUMN
-      ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function()
-        return '%2l:%-2v'
-      end
+      --  Uncomment below to go back to mini.statusline
+      --
+      -- local statusline = require 'mini.statusline'
+      -- -- set use_icons to true if you have a Nerd Font
+      -- statusline.setup { use_icons = vim.g.have_nerd_font }
+      --
+      -- -- You can configure sections in the statusline by overriding their
+      -- -- default behavior. For example, here we set the section for
+      -- -- cursor location to LINE:COLUMN
+      -- ---@diagnostic disable-next-line: duplicate-set-field
+      -- statusline.section_location = function()
+      --   return '%2l:%-2v'
+      -- end
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
@@ -977,7 +1067,7 @@ require('lazy').setup({
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.neo-tree',
   -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
