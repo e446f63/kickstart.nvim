@@ -10,12 +10,20 @@ return {
     'MunifTanjim/nui.nvim',
   },
   lazy = false,
+
   keys = {
     { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    -- My custom keymap for the hell of it
+    { '<leader>tn', ':Neotree toggle show<CR>', desc = '[N]eo-tree' },
   },
   opts = {
-    close_if_last_window = true, -- default is false
+    close_if_last_window = true,
     filesystem = {
+      filtered_items = {
+        visible = true,
+        -- hide_dotfiles = true,
+        -- hide_hidden = true,
+      },
       window = {
         mappings = {
           ['\\'] = 'close_window',
