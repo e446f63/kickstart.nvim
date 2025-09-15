@@ -971,19 +971,33 @@ require('lazy').setup({
   {
     'nvim-lualine/lualine.nvim',
     config = function()
+      -- Put these lines back to go back to custom statusline
+      -- local function inactive()
+      --   return '------------------------------------------------'
+      -- end
       local function inactive()
-        return '------------------------------------------------'
+        return '(inactive)'
       end
       require('lualine').setup {
         -- make the statusline between windows standout a bit more
         inactive_sections = {
-          lualine_a = {},
-          lualine_b = { 'filename', inactive },
-          lualine_c = {},
-          lualine_x = {},
-          lualine_y = { inactive, 'filename' },
-          lualine_z = {},
+          lualine_a = { 'mode' },
+          lualine_b = { 'branch', inactive },
+          lualine_c = { 'filename' },
+          lualine_x = { inactive, 'filetype' },
+          lualine_y = { 'progress' },
+          lualine_z = { 'location' },
         },
+        --
+        -- Put these lines back to go back to custom statusline
+        -- inactive_sections = {
+        --   lualine_a = {},
+        --   lualine_b = { 'filename', inactive },
+        --   lualine_c = {},
+        --   lualine_x = {},
+        --   lualine_y = { inactive, 'filename' },
+        --   lualine_z = {},
+        -- },
       }
     end,
   },
