@@ -687,6 +687,35 @@ require('lazy').setup({
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
         --
+        -- **CUSTOM** this customizes the python LSP to accept longer lines
+        -- (79 character line max is ridiculous!)
+        -- pylsp = {
+        --   settings = {
+        --     pylsp = {
+        --       plugins = {
+        --         flake8 = { enabled = false },
+        --         pyflakes = { enabled = false },
+        --         mccabe = { enabled = false },
+        --
+        --         pycodestyle = {
+        --           enabled = true,
+        --           -- Ignore the E501 error completely
+        --           ignore = { 'E501' },
+        --           --
+        --           -- Instead of ignoring, just increase the limit.
+        --           maxLineLength = 119, -- 119 characters instead of 79
+        --         },
+        --
+        --         -- If you want pylsp to format your code on save/format command,
+        --         -- and respect the new line length:
+        --         -- autopep8 = {
+        --         --   enabled = true,
+        --         --   max_line_length = 120, -- Note: uses underscores here
+        --         -- },
+        --       },
+        --     },
+        --   },
+        -- },
 
         lua_ls = {
           -- cmd = { ... },
