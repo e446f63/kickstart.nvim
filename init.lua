@@ -674,6 +674,7 @@ require('lazy').setup({
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+
       local servers = {
         -- clangd = {},
         -- gopls = {},
@@ -689,33 +690,36 @@ require('lazy').setup({
         --
         -- **CUSTOM** this customizes the python LSP to accept longer lines
         -- (79 character line max is ridiculous!)
-        -- pylsp = {
-        --   settings = {
-        --     pylsp = {
-        --       plugins = {
-        --         flake8 = { enabled = false },
-        --         pyflakes = { enabled = false },
-        --         mccabe = { enabled = false },
-        --
-        --         pycodestyle = {
-        --           enabled = true,
-        --           -- Ignore the E501 error completely
-        --           ignore = { 'E501' },
-        --           --
-        --           -- Instead of ignoring, just increase the limit.
-        --           maxLineLength = 119, -- 119 characters instead of 79
-        --         },
-        --
-        --         -- If you want pylsp to format your code on save/format command,
-        --         -- and respect the new line length:
-        --         -- autopep8 = {
-        --         --   enabled = true,
-        --         --   max_line_length = 120, -- Note: uses underscores here
-        --         -- },
-        --       },
-        --     },
-        --   },
-        -- },
+        pylsp = {
+          settings = {
+            pylsp = {
+              plugins = {
+                flake8 = {
+                  enabled = true,
+                  -- Ignore the E501 error completely
+                  ignore = { 'E501' },
+                },
+                pyflakes = { enabled = true },
+                mccabe = { enabled = true },
+
+                pycodestyle = {
+                  -- Ignore the E501 error completely
+                  -- ignore = { 'E501' },
+                  --
+                  -- Instead of ignoring, just increase the limit.
+                  maxLineLength = 119, -- 119 characters instead of 79
+                },
+
+                -- If you want pylsp to format your code on save/format command,
+                -- and respect the new line length:
+                -- autopep8 = {
+                --   enabled = true,
+                --   max_line_length = 119, -- Note: uses underscores here
+                -- },
+              },
+            },
+          },
+        },
 
         lua_ls = {
           -- cmd = { ... },
@@ -752,20 +756,28 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      require('mason-lspconfig').setup {
-        ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-        automatic_installation = false,
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for ts_ls)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
-        },
-      }
+      -- Commented out the block below because Mason no longer works this way.
+      -- require('mason-lspconfig').setup {
+      --   ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
+      --   automatic_installation = false,
+      --   handlers = {
+      --     function(server_name)
+      --       local server = servers[server_name] or {}
+      --       -- This handles overriding only values explicitly passed
+      --       -- by the server configuration above. Useful when disabling
+      --       -- certain features of an LSP (for example, turning off formatting for ts_ls)
+      --       server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+      --       vim.lsp.config(server_name).setup(server)
+      --       vim.lsp.enable(server_name)
+      --     end,
+      --   },
+      -- }
+      --
+      -- The loop below is for overriding the default configuration of LSPs with the ones in the servers table
+      for server_name, config in pairs(servers) do
+        vim.lsp.config(server_name, config)
+        vim.lsp.enable(server_name)
+      end
     end,
   },
 
@@ -996,37 +1008,36 @@ require('lazy').setup({
     end,
   },
 
-  -- comment this block out if using the default mini.statusline
+  -- comment this entire block out if using the default mini.statusline
   {
     'nvim-lualine/lualine.nvim',
     config = function()
-      -- Put these lines back to go back to custom statusline
-      -- local function inactive()
-      --   return '------------------------------------------------'
-      -- end
+      -- **CUSTOM** Customize inactive statusline and ayu_dark theme
       local function inactive()
         return '(inactive)'
       end
+
+      local custom_ayu_dark = require 'lualine.themes.ayu_dark'
+
+      -- Change the background of c and a sections for inactive windows.
+      custom_ayu_dark.inactive.c.bg = '#283d52'
+      custom_ayu_dark.inactive.a.bg = '#283d52'
+      custom_ayu_dark.inactive.a.gui = ''
+
       require('lualine').setup {
-        -- make the statusline between windows standout a bit more
+
+        -- Use ayu_dark with above customizations.
+        options = { theme = custom_ayu_dark },
+
+        -- Custom statusline for inactive sessions.
         inactive_sections = {
           lualine_a = { 'mode' },
-          lualine_b = { 'branch', inactive },
-          lualine_c = { 'filename' },
+          lualine_b = { 'branch', 'filename' },
+          lualine_c = { inactive },
           lualine_x = { inactive, 'filetype' },
           lualine_y = { 'progress' },
           lualine_z = { 'location' },
         },
-        --
-        -- Put these lines back to go back to custom statusline
-        -- inactive_sections = {
-        --   lualine_a = {},
-        --   lualine_b = { 'filename', inactive },
-        --   lualine_c = {},
-        --   lualine_x = {},
-        --   lualine_y = { inactive, 'filename' },
-        --   lualine_z = {},
-        -- },
       }
     end,
   },
