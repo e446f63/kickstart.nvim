@@ -1,6 +1,5 @@
 --[[
 
-
 =====================================================================
 ==================== READ THIS BEFORE CONTINUING ====================
 =====================================================================
@@ -21,7 +20,7 @@
 =====================================================================
 =====================================================================
 
-This file was originally from Kickstart.nvim, apparently by T.J. DeVries
+This file was originally from Kickstart.nvim by T.J. DeVries
 
   Original at: https://github.com/nvim-lua/kickstart.nvim
 
@@ -242,7 +241,7 @@ require('lazy').setup(
 
     'NMAC427/guess-indent.nvim', -- NOTE: Detect tabstop and shiftwidth automatically
 
-    'ThePrimeagen/vim-be-good',  -- NOTE: vim game
+    'ThePrimeagen/vim-be-good', -- NOTE: vim game
 
     -- NOTE: Plugins can also be added by using a table,
     -- with the first argument being the link and the following
@@ -293,7 +292,7 @@ require('lazy').setup(
     -- Then, because we use the `opts` key (recommended), the configuration runs
     -- after the plugin has been loaded as `require(MODULE).setup(opts)`.
 
-    {                     -- NOTE: Useful plugin to show you pending keybinds.
+    { -- NOTE: Useful plugin to show you pending keybinds.
       'folke/which-key.nvim',
       event = 'VimEnter', -- Sets the loading event to 'VimEnter'
       opts = {
@@ -346,7 +345,7 @@ require('lazy').setup(
       },
     },
 
-    -- NOTE: Plugins can specify dependencies.
+    -- Plugins can specify dependencies.
     --
     -- The dependencies are proper plugin specifications as well - anything
     -- you do for a plugin at the top level, you can do for a dependency.
@@ -375,7 +374,7 @@ require('lazy').setup(
         { 'nvim-telescope/telescope-ui-select.nvim' },
 
         -- Useful for getting pretty icons, but requires a Nerd Font.
-        { 'nvim-tree/nvim-web-devicons',            enabled = vim.g.have_nerd_font },
+        { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
       },
 
       config = function()
@@ -410,7 +409,21 @@ require('lazy').setup(
             --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
             --   },
           },
-          -- pickers = {}
+          -- NOTE: Set custom keymapping in buffers picker
+          pickers = {
+            -- the Telescope picker is called "buffers".
+            buffers = {
+              -- keymappings of "buffers".
+              mappings = {
+                -- "n" is for "Normal" mode.
+                n = {
+                  -- "delete_buffer" is the builtin name in Telescope.
+                  -- This change the default <M-d> to <dd>.
+                  ['dd'] = 'delete_buffer',
+                },
+              },
+            },
+          },
           extensions = {
             ['ui-select'] = {
               require('telescope.themes').get_dropdown(),
@@ -493,9 +506,10 @@ require('lazy').setup(
         'WhoIsSethDaniel/mason-tool-installer.nvim',
 
         -- Useful status updates for LSP.
-        { 'j-hui/fidget.nvim',    opts = {} },
+        { 'j-hui/fidget.nvim', opts = {} },
 
         -- Allows extra capabilities provided by blink.cmp
+        -- According to blink's website, this isn't needed anymore
         'saghen/blink.cmp',
       },
 
@@ -666,7 +680,8 @@ require('lazy').setup(
         --  By default, Neovim doesn't support everything that is in the LSP specification.
         --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
         --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
-        local capabilities = require('blink.cmp').get_lsp_capabilities()
+        --  I don't think this next line is needed anymore. LSP says it's unused.
+        -- local capabilities = require('blink.cmp').get_lsp_capabilities()
 
         -- Enable the following language servers
         --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -682,7 +697,8 @@ require('lazy').setup(
         local servers = {
           -- clangd = {},
           -- gopls = {},
-          -- pyright = {},
+          -- kickstart's suggested Python LSP. Created by MS and very well supported.
+          pyright = {},
           -- rust_analyzer = {},
           -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
           --
@@ -692,38 +708,38 @@ require('lazy').setup(
           -- But for many setups, the LSP (`ts_ls`) will work just fine
           -- ts_ls = {},
           --
-          -- **CUSTOM** this customizes the python LSP to accept longer lines
-          -- (79 character line max is ridiculous!)
-          pylsp = {
-            settings = {
-              pylsp = {
-                plugins = {
-                  flake8 = {
-                    enabled = true,
-                    -- Ignore the E501 error completely
-                    ignore = { 'E501' },
-                  },
-                  pyflakes = { enabled = true },
-                  mccabe = { enabled = true },
-
-                  pycodestyle = {
-                    -- Ignore the E501 error completely
-                    -- ignore = { 'E501' },
-                    --
-                    -- Instead of ignoring, just increase the limit.
-                    maxLineLength = 119, -- 119 characters instead of 79
-                  },
-
-                  -- If you want pylsp to format your code on save/format command,
-                  -- and respect the new line length:
-                  -- autopep8 = {
-                  --   enabled = true,
-                  --   max_line_length = 119, -- Note: uses underscores here
-                  -- },
-                },
-              },
-            },
-          },
+          -- -- **CUSTOM** this is my customized python LSP to accept longer lines
+          -- -- (79 character line max is ridiculous!)
+          -- pylsp = {
+          --   settings = {
+          --     pylsp = {
+          --       plugins = {
+          --         flake8 = {
+          --           enabled = true,
+          --           -- Ignore the E501 error completely
+          --           ignore = { 'E501' },
+          --         },
+          --         pyflakes = { enabled = true },
+          --         mccabe = { enabled = true },
+          --
+          --         pycodestyle = {
+          --           -- Ignore the E501 error completely
+          --           -- ignore = { 'E501' },
+          --           --
+          --           -- Instead of ignoring, just increase the limit.
+          --           maxLineLength = 119, -- 119 characters instead of 79
+          --         },
+          --
+          --         -- If you want pylsp to format your code on save/format command,
+          --         -- and respect the new line length:
+          --         -- autopep8 = {
+          --         --   enabled = true,
+          --         --   max_line_length = 119, -- Note: uses underscores here
+          --         -- },
+          --       },
+          --     },
+          --   },
+          -- },
 
           lua_ls = {
             -- cmd = { ... },
@@ -762,55 +778,57 @@ require('lazy').setup(
 
         -- The loop below is for overriding the default configuration of LSPs with the ones in the servers table
         for server_name, config in pairs(servers) do
-          -- the line below was originally in the 'handlers' block of the 'require('mason-lspconfig').setup' block
-          -- it seems like it should work, but throws an lsp error.
-          -- server_name.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server_name.capabilities or {})
+          -- Next line is from blink.cmp documentation, but I'm not sure if this actually changed anything.
+          -- Commenting out didn't change anything, might even be a little faster.
+          -- config.capabilities = require('blink-cmp').get_lsp_capabilities(config.capabilities)
+
+          -- These 2 lines for sure work and are correct.
           vim.lsp.config(server_name, config)
           vim.lsp.enable(server_name)
         end
       end,
     },
 
-    { -- NOTE: Autoformater
-      'stevearc/conform.nvim',
-      event = { 'BufWritePre' },
-      cmd = { 'ConformInfo' },
-      keys = {
-        {
-          '<leader>f',
-          function()
-            require('conform').format { async = true, lsp_format = 'fallback' }
-          end,
-          mode = '',
-          desc = '[F]ormat buffer',
-        },
-      },
-      opts = {
-        notify_on_error = false,
-        format_on_save = function(bufnr)
-          -- Disable "format_on_save lsp_fallback" for languages that don't
-          -- have a well standardized coding style. You can add additional
-          -- languages here or re-enable it for the disabled ones.
-          local disable_filetypes = { c = true, cpp = true }
-          if disable_filetypes[vim.bo[bufnr].filetype] then
-            return nil
-          else
-            return {
-              timeout_ms = 500,
-              lsp_format = 'fallback',
-            }
-          end
-        end,
-        formatters_by_ft = {
-          -- lua = { 'stylua' }, -- commented out to prevent autoformatting Lua.
-          -- Conform can also run multiple formatters sequentially
-          -- python = { "isort", "black" },
-          --
-          -- You can use 'stop_after_first' to run the first available formatter from the list
-          -- javascript = { "prettierd", "prettier", stop_after_first = true },
-        },
-      },
-    },
+    -- { -- NOTE: Autoformater  --Commented out for now because I don't like autoformatters.
+    --   'stevearc/conform.nvim',
+    --   event = { 'BufWritePre' },
+    --   cmd = { 'ConformInfo' },
+    --   keys = {
+    --     {
+    --       '<leader>f',
+    --       function()
+    --         require('conform').format { async = true, lsp_format = 'fallback' }
+    --       end,
+    --       mode = '',
+    --       desc = '[F]ormat buffer',
+    --     },
+    --   },
+    --   opts = {
+    --     notify_on_error = false,
+    --     format_on_save = function(bufnr)
+    --       -- Disable "format_on_save lsp_fallback" for languages that don't
+    --       -- have a well standardized coding style. You can add additional
+    --       -- languages here or re-enable it for the disabled ones.
+    --       local disable_filetypes = { c = true, cpp = true }
+    --       if disable_filetypes[vim.bo[bufnr].filetype] then
+    --         return nil
+    --       else
+    --         return {
+    --           timeout_ms = 500,
+    --           lsp_format = 'fallback',
+    --         }
+    --       end
+    --     end,
+    --     formatters_by_ft = {
+    --       lua = { 'stylua' },
+    --       -- Conform can also run multiple formatters sequentially
+    --       -- python = { "isort", "black" },
+    --       --
+    --       -- You can use 'stop_after_first' to run the first available formatter from the list
+    --       -- javascript = { "prettierd", "prettier", stop_after_first = true },
+    --     },
+    --   },
+    -- },
 
     { -- NOTE: Blink Autocompletion
       'saghen/blink.cmp',
@@ -856,6 +874,7 @@ require('lazy').setup(
           -- 'super-tab' for tab to accept
           -- 'enter' for enter to accept
           -- 'none' for no mappings
+          -- **CUSTOM** I changed this to `super-tab` because <c-y> to accept is insane!
           preset = 'super-tab',
 
           -- For an understanding of why the 'default' preset is recommended,
@@ -885,13 +904,13 @@ require('lazy').setup(
         completion = {
           -- By default, you may press `<c-space>` to show the documentation.
           -- Optionally, set `auto_show = true` to show the documentation after a delay.
-          documentation = { auto_show = false, auto_show_delay_ms = 500 },
+          documentation = { auto_show = true, auto_show_delay_ms = 500 },
         },
 
         sources = {
-          default = { 'lsp', 'path', 'snippets', 'lazydev' },
+          default = { 'lazydev', 'lsp', 'path', 'snippets' },
           providers = {
-            lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+            lazydev = { name = 'LazyDev', module = 'lazydev.integrations.blink', score_offset = 100 },
           },
         },
 
@@ -909,6 +928,7 @@ require('lazy').setup(
         -- Shows a signature help window while you type arguments for a function
         signature = { enabled = true },
       },
+      opts_extend = { 'sources.default' },
     },
 
     --NOTE:
@@ -1023,30 +1043,78 @@ require('lazy').setup(
     {
       'nvim-lualine/lualine.nvim',
       config = function()
-        -- **CUSTOM** Customize inactive statusline and ayu_dark theme
-        local function inactive()
-          return '(inactive)'
-        end
+        -- NOTE: Customize inactive statusline and ayu_dark theme
 
+        -- The defaults are at `~/.local/share/nvim/lazy/lualine.nvim/lua/lualine/themes`
         local custom_ayu_dark = require 'lualine.themes.ayu_dark'
 
-        -- Change the background of c and a sections for inactive windows.
-        custom_ayu_dark.inactive.c.bg = '#283d52'
+        -- Change inactive window statusline for better separation and darker blue.
         custom_ayu_dark.inactive.a.bg = '#283d52'
-        custom_ayu_dark.inactive.a.gui = ''
+        custom_ayu_dark.inactive.a.fg = '#36a3d9'
+        custom_ayu_dark.inactive.a.gui = 'bold'
+        custom_ayu_dark.inactive.b.fg = '#36a3d9'
+        custom_ayu_dark.inactive.c.bg = '#283d52'
+        custom_ayu_dark.inactive.c.fg = '#36a3d9'
+
+        -- Change normal mode statusline to blue
+        custom_ayu_dark.normal.c.bg = '#2f93c4'
+        custom_ayu_dark.normal.c.fg = '#14191f'
+        custom_ayu_dark.normal.b.fg = '#36a3d9'
+
+        -- TODO: Someday, update colors of other modes for more consistency. See default theme file above.
 
         require('lualine').setup {
 
+          -- NOTE: Change this when changing themes!
           -- Use ayu_dark with above customizations.
           options = { theme = custom_ayu_dark },
 
+          -- Custom statusline for active sessions.
+          sections = {
+            lualine_a = { 'mode' },
+            -- if no git branch info, insert placeholder text to keep statusline pretty.
+            lualine_b = {
+              {
+                'branch',
+                fmt = function(str)
+                  if str == '' or str == nil then
+                    return 'no git repo'
+                  end
+                  return str
+                end,
+              },
+              'diff',
+              'diagnostics',
+            },
+            lualine_c = { 'filename' },
+            -- show buffer numbers, not names
+            lualine_x = { { 'buffers', mode = 3 } },
+            lualine_y = { 'fileformat', 'filetype', 'progress' },
+            lualine_z = { 'location' },
+          },
+
           -- Custom statusline for inactive sessions.
+          -- Same as active, except bg colors.
           inactive_sections = {
             lualine_a = { 'mode' },
-            lualine_b = { 'branch', 'filename' },
-            lualine_c = { inactive },
-            lualine_x = { inactive, 'filetype' },
-            lualine_y = { 'progress' },
+            -- if no git branch info, insert placeholder text to keep statusline pretty.
+            lualine_b = {
+              {
+                'branch',
+                fmt = function(str)
+                  if str == '' or str == nil then
+                    return 'no git repo'
+                  end
+                  return str
+                end,
+              },
+              'diff',
+              'diagnostics',
+            },
+            lualine_c = { 'filename' },
+            -- show buffer numbers, not names
+            lualine_x = { { 'buffers', mode = 3 } },
+            lualine_y = { 'fileformat', 'filetype', 'progress' },
             lualine_z = { 'location' },
           },
         }
