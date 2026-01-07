@@ -204,6 +204,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 ==================== INSTALL LAZY.NVIM           ====================
 =====================================================================
 --]]
+
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -225,7 +226,7 @@ rtp:prepend(lazypath)
 ==================== CONFIGURE & INSTALL PLUGINS ====================
 =====================================================================
 --]]
---
+
 --  To check the current status of your plugins, run
 --    :Lazy
 --
@@ -234,14 +235,12 @@ rtp:prepend(lazypath)
 --  To update plugins you can run
 --    :Lazy update
 --
--- NOTE: All plugins get installed inside this block.
+-- NOTE: All plugins get installed inside this block (i.e. the rest of this file).
 require('lazy').setup(
   {
     -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
 
     'NMAC427/guess-indent.nvim', -- NOTE: Detect tabstop and shiftwidth automatically
-
-    'ThePrimeagen/vim-be-good', -- NOTE: vim game
 
     -- NOTE: Plugins can also be added by using a table,
     -- with the first argument being the link and the following
@@ -285,8 +284,7 @@ require('lazy').setup(
     --
     -- For example, in the following configuration, we use:
     --  event = 'VimEnter'
-    --
-    -- which loads which-key before all the UI elements are loaded. Events can be
+    -- This loads which-key before all the UI elements are loaded. Events can be
     -- normal autocommands events (`:help autocmd-events`).
     --
     -- Then, because we use the `opts` key (recommended), the configuration runs
@@ -473,12 +471,12 @@ require('lazy').setup(
       end,
     },
 
-    --NOTE:
-    --[[
-    =====================================================================
-    ==================== LSP CONFIGURATION           ====================
-    =====================================================================
-    --]]
+--NOTE:
+--[[
+=====================================================================
+==================== LSP CONFIGURATION           ====================
+=====================================================================
+--]]
 
     -- NOTE: LSP Plugins
     {
@@ -551,6 +549,8 @@ require('lazy').setup(
             --
             -- In this case, we create a function that lets us more easily define mappings specific
             -- for LSP related items. It sets the mode, buffer and description for us each time.
+            -- TODO: Many of these keymaps are now in Neovim by default. Review the Neovim docs
+            -- and delete any duplicates.
             local map = function(keys, func, desc, mode)
               mode = mode or 'n'
               vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
@@ -611,6 +611,7 @@ require('lazy').setup(
             --    See `:help CursorHold` for information about when this is executed
             --
             -- When you move your cursor, the highlights will be cleared (the second autocommand).
+            -- TODO: Review the Neovim docs to see if this functionality is default now as well.
             local client = vim.lsp.get_client_by_id(event.data.client_id)
             if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
               local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
@@ -676,6 +677,7 @@ require('lazy').setup(
           },
         }
 
+        -- TODO: Experiment with disabling blink.cmp and using Neovim's native completion instead.
         -- LSP servers and clients are able to communicate to each other what features they support.
         --  By default, Neovim doesn't support everything that is in the LSP specification.
         --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
@@ -697,7 +699,11 @@ require('lazy').setup(
         local servers = {
           -- clangd = {},
           -- gopls = {},
+
+          -- **CUSTOM**
           -- kickstart's suggested Python LSP. Created by MS and very well supported.
+          -- now using this instead of pylsp.
+          -- comment this out and uncomment below to switch back.
           pyright = {},
           -- rust_analyzer = {},
           -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -708,8 +714,9 @@ require('lazy').setup(
           -- But for many setups, the LSP (`ts_ls`) will work just fine
           -- ts_ls = {},
           --
-          -- -- **CUSTOM** this is my customized python LSP to accept longer lines
-          -- -- (79 character line max is ridiculous!)
+          -- -- **CUSTOM** was using this before pyright.
+          -- -- customized to accept longer lines (79 character line max is ridiculous!)
+          -- -- uncomment all of this and comment out pyright line to switch back.
           -- pylsp = {
           --   settings = {
           --     pylsp = {
@@ -778,8 +785,9 @@ require('lazy').setup(
 
         -- The loop below is for overriding the default configuration of LSPs with the ones in the servers table
         for server_name, config in pairs(servers) do
-          -- Next line is from blink.cmp documentation, but I'm not sure if this actually changed anything.
-          -- Commenting out didn't change anything, might even be a little faster.
+
+          -- -- Next line is from blink.cmp documentation, but I'm not sure if this actually changed anything.
+          -- -- Commenting out didn't change anything, might even be a little faster.
           -- config.capabilities = require('blink-cmp').get_lsp_capabilities(config.capabilities)
 
           -- These 2 lines for sure work and are correct.
@@ -861,6 +869,7 @@ require('lazy').setup(
           },
           opts = {},
         },
+
         'folke/lazydev.nvim',
       },
       --- @module 'blink.cmp'
@@ -931,42 +940,41 @@ require('lazy').setup(
       opts_extend = { 'sources.default' },
     },
 
-    --NOTE:
-    --[[
-    =====================================================================
-    ==================== COLORSCHEMES                ====================
-    =====================================================================
-    --]]
+--NOTE:
+--[[
+=====================================================================
+==================== COLORSCHEMES                ====================
+=====================================================================
+--]]
 
-    { -- You can easily change to a different colorscheme.
-      -- Change the name of the colorscheme plugin below, and then
-      -- change the command in the config to whatever the name of that colorscheme is.
-      --
-      -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-      {
-        'projekt0n/github-nvim-theme',
-        name = 'github-theme',
-        -- priority = 1000, -- Make sure to load this before all the other start plugins.
-        config = function()
-          -- Load the colorscheme (uncomment line below to make this colorscheme the default)
-          -- vim.cmd.colorscheme 'github_dark_default'
-        end,
-      },
+    -- You can easily change to a different colorscheme.
+    -- Change the name of the colorscheme plugin below, and then
+    -- change the command in the config to whatever the name of that colorscheme is.
+    --
+    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
 
-      {
-        'Luxed/ayu-vim',
-        priority = 1000, -- Make sure to load this before all the other start plugins.
+    { 'Luxed/ayu-vim',
+      priority = 1000, -- Make sure to load this before all the other start plugins.
 
-        config = function()
-          vim.g.ayu_sign_contrast = 0 -- default, but leaving in for reference
-          vim.g.ayu_extended_palette = 1
+      config = function()
+        vim.g.ayu_sign_contrast = 0 -- default, but leaving in for reference
+        vim.g.ayu_extended_palette = 1
 
-          -- Load the colorscheme (uncomment line below to make this colorscheme the default)
-          vim.cmd.colorscheme 'ayu'
-        end,
-      },
+        -- Load the colorscheme (uncomment line below to make this colorscheme the default)
+        vim.cmd.colorscheme 'ayu'
+      end,
+    },
 
-      'folke/tokyonight.nvim',
+    { 'projekt0n/github-nvim-theme',
+      name = 'github-theme',
+      -- priority = 1000, -- Make sure to load this before all the other start plugins.
+      config = function()
+        -- Load the colorscheme (uncomment line below to make this colorscheme the default)
+        -- vim.cmd.colorscheme 'github_dark_default'
+      end,
+    },
+
+    { 'folke/tokyonight.nvim',
       -- priority = 1000, -- Make sure to load this before all the other start plugins.
       config = function()
         ---@diagnostic disable-next-line: missing-fields
@@ -975,18 +983,17 @@ require('lazy').setup(
             comments = { italic = false }, -- Disable italics in comments
           },
         }
-
         -- Load the colorscheme (uncomment line below to make this colorscheme the default)
         -- vim.cmd.colorscheme 'tokyonight-night'
       end,
     },
 
-    --NOTE:
-    --[[
-    =====================================================================
-    ==================== TODO-COMMENTS & MINI.NVIM   ====================
-    =====================================================================
-    --]]
+--NOTE:
+--[[
+=====================================================================
+==================== TODO-COMMENTS & MINI.NVIM   ====================
+=====================================================================
+--]]
 
     -- Highlight todo, notes, etc in comments
     { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
@@ -1009,12 +1016,12 @@ require('lazy').setup(
         -- - sr)'  - [S]urround [R]eplace [)] [']
         require('mini.surround').setup()
 
-        --NOTE:
-        --[[
-        =====================================================================
-        ==================== STATUSLINE                  ====================
-        =====================================================================
-        --]]
+--NOTE:
+--[[
+=====================================================================
+==================== STATUSLINE                  ====================
+=====================================================================
+--]]
 
         -- Simple and easy statusline.
         --  You could remove this setup call if you don't like it,
@@ -1121,12 +1128,12 @@ require('lazy').setup(
       end,
     },
 
-    --NOTE:
-    --[[
-    =====================================================================
-    ==================== TREESITTER                  ====================
-    =====================================================================
-    --]]
+--NOTE:
+--[[
+=====================================================================
+==================== TREESITTER                  ====================
+=====================================================================
+--]]
     { -- Highlight, edit, and navigate code
       'nvim-treesitter/nvim-treesitter',
       build = ':TSUpdate',
@@ -1153,15 +1160,17 @@ require('lazy').setup(
       --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     },
 
-    --NOTE:
-    --[[
-    =====================================================================
-    ==================== ADDITIONAL/CUSTOM PLUGINS   ====================
-    =====================================================================
-    --]]
+--NOTE:
+--[[
+=====================================================================
+==================== ADDITIONAL/CUSTOM PLUGINS   ====================
+=====================================================================
+--]]
 
     -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
-    --
+
+    'ThePrimeagen/vim-be-good', -- NOTE: vim game
+
     --  Here are some example plugins that I've included in the Kickstart repository.
     --  Uncomment any of the lines below to enable them (you will need to restart nvim).
     --
@@ -1169,7 +1178,7 @@ require('lazy').setup(
     -- require 'kickstart.plugins.indent_line',
     -- require 'kickstart.plugins.lint',
     -- require 'kickstart.plugins.autopairs',
-    require 'kickstart.plugins.neo-tree',
+    require 'kickstart.plugins.neo-tree',  -- File explorer
     -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
     -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
@@ -1184,12 +1193,13 @@ require('lazy').setup(
     -- you can continue same window with `<space>sr` which resumes last telescope search
   },
 
-  --NOTE:
-  --[[
-  =====================================================================
-  ==================== UI STUFF - ICONS            ====================
-  =====================================================================
-  --]]
+--NOTE:
+--[[
+=====================================================================
+==================== UI STUFF - ICONS            ====================
+=====================================================================
+--]]
+
   {
     ui = {
       -- If you are using a Nerd Font: set icons to an empty table which will use the
