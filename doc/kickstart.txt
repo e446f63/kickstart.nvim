@@ -3,6 +3,11 @@ INTRODUCTION                                                  *kickstart.nvim*
 
 Kickstart.nvim is a project to help you get started on your neovim journey.
 
+                                                	*this-is-my-kickstart*
+This is my kickstart. There are many like it, but this one is mine (now).
+- As the great TJ instructed, I have made this my own and customized
+- I've left most comments for education purposes and added my own for clarity
+
                                                             *kickstart-is-not*
 It is not:
 - Complete framework for every plugin under the sun

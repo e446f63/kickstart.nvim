@@ -1,3 +1,4 @@
 kickstart-is	kickstart.txt	/*kickstart-is*
 kickstart-is-not	kickstart.txt	/*kickstart-is-not*
+kickstart-is-mine	kickstart.txt	/*this-is-my-kickstart*
 kickstart.nvim	kickstart.txt	/*kickstart.nvim*
