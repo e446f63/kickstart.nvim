@@ -593,58 +593,40 @@ require('lazy').setup(
             --  the definition of its *type*, not where it was *defined*.
             map('grt', require('telescope.builtin').lsp_type_definitions, '[G]oto [T]ype Definition')
 
-            -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
-            ---@param client vim.lsp.Client
-            ---@param method vim.lsp.protocol.Method
-            ---@param bufnr? integer some lsp support methods only in specific files
-            ---@return boolean
-            local function client_supports_method(client, method, bufnr)
-              if vim.fn.has 'nvim-0.11' == 1 then
-                return client:supports_method(method, bufnr)
-              else
-                return client:supports_method(method, bufnr) --Made this the same as above to get rid of a useless error.
-              end
-            end
-
             -- The following two autocommands are used to highlight references of the
             -- word under your cursor when your cursor rests there for a little while.
             --    See `:help CursorHold` for information about when this is executed
             --
             -- When you move your cursor, the highlights will be cleared (the second autocommand).
-            -- TODO: Review the Neovim docs to see if this functionality is default now as well.
-            local client = vim.lsp.get_client_by_id(event.data.client_id)
-            if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
-              local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
-              vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-                buffer = event.buf,
-                group = highlight_augroup,
-                callback = vim.lsp.buf.document_highlight,
-              })
+            -- TODO: Review the Neovim docs to see if this functionality is default now.
+            local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
+            vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+              buffer = event.buf,
+              group = highlight_augroup,
+              callback = vim.lsp.buf.document_highlight,
+            })
 
-              vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-                buffer = event.buf,
-                group = highlight_augroup,
-                callback = vim.lsp.buf.clear_references,
-              })
+            vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+              buffer = event.buf,
+              group = highlight_augroup,
+              callback = vim.lsp.buf.clear_references,
+            })
 
-              vim.api.nvim_create_autocmd('LspDetach', {
-                group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
-                callback = function(event2)
-                  vim.lsp.buf.clear_references()
-                  vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
-                end,
-              })
-            end
+            vim.api.nvim_create_autocmd('LspDetach', {
+              group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
+              callback = function(event2)
+                vim.lsp.buf.clear_references()
+                vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
+              end,
+            })
 
             -- The following code creates a keymap to toggle inlay hints in your
             -- code, if the language server you are using supports them
             --
             -- This may be unwanted, since they displace some of your code
-            if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
-              map('<leader>th', function()
-                vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
-              end, '[T]oggle Inlay [H]ints')
-            end
+            map('<leader>th', function()
+              vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
+            end, '[T]oggle Inlay [H]ints')
           end,
         })
 
@@ -677,12 +659,16 @@ require('lazy').setup(
           },
         }
 
-        -- TODO: Experiment with disabling blink.cmp and using Neovim's native completion instead.
+        --TODO: Experiment with disabling blink.cmp and using Neovim's native completion instead.
+        --
         -- LSP servers and clients are able to communicate to each other what features they support.
         --  By default, Neovim doesn't support everything that is in the LSP specification.
         --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
         --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
-        --  I don't think this next line is needed anymore. LSP says it's unused.
+        --
+        --TODO: Delete this commented line if blink.cmp still works and no regressions.
+        --
+        -- I don't think this next line is needed anymore. LSP says it's unused.
         -- local capabilities = require('blink.cmp').get_lsp_capabilities()
 
         -- Enable the following language servers
@@ -696,16 +682,19 @@ require('lazy').setup(
         --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
 
         -- NOTE: LSP Servers
+        -- They **must** be listed in this table to work!
+        -- I think they still need to be installed with Mason, but must be listed here too.
         local servers = {
           -- clangd = {},
           -- gopls = {},
+          -- rust_analyzer = {},
 
           -- **CUSTOM**
           -- kickstart's suggested Python LSP. Created by MS and very well supported.
-          -- now using this instead of pylsp.
-          -- comment this out and uncomment below to switch back.
+          -- now using this instead of pylsp (see ./init.used-last-12262025.lua for previous pylsp config).
           pyright = {},
-          -- rust_analyzer = {},
+          bashls = {},  -- Bash LSP
+          --
           -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
           --
           -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -713,40 +702,6 @@ require('lazy').setup(
           --
           -- But for many setups, the LSP (`ts_ls`) will work just fine
           -- ts_ls = {},
-          --
-          -- -- **CUSTOM** was using this before pyright.
-          -- -- customized to accept longer lines (79 character line max is ridiculous!)
-          -- -- uncomment all of this and comment out pyright line to switch back.
-          -- pylsp = {
-          --   settings = {
-          --     pylsp = {
-          --       plugins = {
-          --         flake8 = {
-          --           enabled = true,
-          --           -- Ignore the E501 error completely
-          --           ignore = { 'E501' },
-          --         },
-          --         pyflakes = { enabled = true },
-          --         mccabe = { enabled = true },
-          --
-          --         pycodestyle = {
-          --           -- Ignore the E501 error completely
-          --           -- ignore = { 'E501' },
-          --           --
-          --           -- Instead of ignoring, just increase the limit.
-          --           maxLineLength = 119, -- 119 characters instead of 79
-          --         },
-          --
-          --         -- If you want pylsp to format your code on save/format command,
-          --         -- and respect the new line length:
-          --         -- autopep8 = {
-          --         --   enabled = true,
-          --         --   max_line_length = 119, -- Note: uses underscores here
-          --         -- },
-          --       },
-          --     },
-          --   },
-          -- },
 
           lua_ls = {
             -- cmd = { ... },
@@ -786,11 +741,13 @@ require('lazy').setup(
         -- The loop below is for overriding the default configuration of LSPs with the ones in the servers table
         for server_name, config in pairs(servers) do
 
+          --TODO: Delete this and next 4 lines if blink.cmp still works and no regressions.
           -- -- Next line is from blink.cmp documentation, but I'm not sure if this actually changed anything.
           -- -- Commenting out didn't change anything, might even be a little faster.
+          --
           -- config.capabilities = require('blink-cmp').get_lsp_capabilities(config.capabilities)
 
-          -- These 2 lines for sure work and are correct.
+          -- These 2 lines for sure work and are correct. They configure, then enable the servers listed above.
           vim.lsp.config(server_name, config)
           vim.lsp.enable(server_name)
         end
@@ -917,6 +874,7 @@ require('lazy').setup(
         },
 
         sources = {
+          --NOTE: Add 'buffer' at the end of this list to include autocomplete for all words in active buffer.
           default = { 'lazydev', 'lsp', 'path', 'snippets' },
           providers = {
             lazydev = { name = 'LazyDev', module = 'lazydev.integrations.blink', score_offset = 100 },
@@ -965,6 +923,7 @@ require('lazy').setup(
       end,
     },
 
+    --TODO: Am I ever going to use this colorscheme? If not, delete this block.
     { 'projekt0n/github-nvim-theme',
       name = 'github-theme',
       -- priority = 1000, -- Make sure to load this before all the other start plugins.
@@ -1043,7 +1002,7 @@ require('lazy').setup(
 
         -- ... and there is more!
         --  Check out: https://github.com/echasnovski/mini.nvim
-      end,
+      end,  -- This is the end of the mini.nvim `config = function ()` block.
     },
 
     --NOTE: Comment this entire block out if using the default mini.statusline
@@ -1136,6 +1095,12 @@ require('lazy').setup(
 --]]
     { -- Highlight, edit, and navigate code
       'nvim-treesitter/nvim-treesitter',
+      --FIX: Temporary workaround until I update this plugin. It now defaults to the "main" branch, which is very different!
+      --It may be time to get rid of this plugin because the main dev is an asshole.
+      --To fix 'nvim-treesitter' on the 'main' branch, use this: https://github.com/nvim-lua/kickstart.nvim/pull/1657
+      --Perhaps better, a new plugin was created to sanely bridge the gap and recommended by Vhyrro on YT:
+      --https://github.com/MeanderingProgrammer/treesitter-modules.nvim
+      branch = "master",
       build = ':TSUpdate',
       main = 'nvim-treesitter.configs', -- Sets main module to use for opts
       -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
@@ -1152,12 +1117,6 @@ require('lazy').setup(
         },
         indent = { enable = true, disable = { 'ruby' } },
       },
-      -- There are additional nvim-treesitter modules that you can use to interact
-      -- with nvim-treesitter. You should go explore a few and see what interests you:
-      --
-      --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-      --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
-      --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
     },
 
 --NOTE:
