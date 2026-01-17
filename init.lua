@@ -168,17 +168,11 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 --  Use CTRL+<hjkl> to switch between windows
 --
 --  See `:help wincmd` for a list of all window commands
+--  If these don't work, see original kickstart.nvim file for different versions.
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-
--- Some terminals have colliding keymaps or are not able to send distinct keycodes
--- If so, use these (or your own) instead.
--- vim.keymap.set("n", "<C-S-h>", "<C-w>H", { desc = "Move window to the left" })
--- vim.keymap.set("n", "<C-S-l>", "<C-w>L", { desc = "Move window to the right" })
--- vim.keymap.set("n", "<C-S-j>", "<C-w>J", { desc = "Move window to the lower" })
--- vim.keymap.set("n", "<C-S-k>", "<C-w>K", { desc = "Move window to the upper" })
 
 --NOTE:
 --[[
@@ -240,28 +234,16 @@ require('lazy').setup(
   {
     -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
 
-    'NMAC427/guess-indent.nvim', -- NOTE: Detect tabstop and shiftwidth automatically
+    { 'NMAC427/guess-indent.nvim', opts = {} },-- Detect tabstop and shiftwidth automatically
 
-    -- NOTE: Plugins can also be added by using a table,
-    -- with the first argument being the link and the following
-    -- keys can be used to configure plugin behavior/loading/etc.
-    --
-    -- Use `opts = {}` to automatically pass options to a plugin's `setup()` function, forcing the plugin to be loaded.
-    --
+    -- NOTE: Use `opts = {}` to automatically pass options to a
+    -- plugin's `setup()` function, forcing the plugin to be loaded.
+    -- You must at least pass `opts = {}` to a plugin!
+    -- For example, the 'guess-indent' plugin above was orignally just "'NMAC427/guess-indent.nvim'".
+    -- It stopped working until I made it a table and added 'opts'.
 
     -- Alternatively, use `config = function() ... end` for full control over the configuration.
-    -- If you prefer to call `setup` explicitly, use:
-    --    {
-    --        'lewis6991/gitsigns.nvim',
-    --        config = function()
-    --            require('gitsigns').setup({
-    --                -- Your gitsigns configuration here
-    --            })
-    --        end,
-    --    }
-    --
-    -- Here is a more advanced example where we pass configuration
-    -- options to `gitsigns.nvim`.
+    -- Passing 'opts' is recommended, but plugins generally say what they need in help.
     --
     -- See `:help gitsigns` to understand what the configuration keys do
     { -- NOTE: Adds git related signs to the gutter, as well as utilities for managing changes
@@ -416,11 +398,16 @@ require('lazy').setup(
                 -- "n" is for "Normal" mode.
                 n = {
                   -- "delete_buffer" is the builtin name in Telescope.
-                  -- This change the default <M-d> to <dd>.
+                  -- This changes the default <M-d> to <dd>.
                   ['dd'] = 'delete_buffer',
                 },
               },
             },
+            -- Set the 'grep' pickers to insert mode by default
+            live_grep = { initial_mode = 'insert' },
+            grep_string = { initial_mode = 'insert' },
+            help_tags = { initial_mode = 'insert' },
+            current_buffer_fuzzy_find = { initial_mode = 'insert' },
           },
           extensions = {
             ['ui-select'] = {
@@ -438,7 +425,7 @@ require('lazy').setup(
         vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = '[S]earch [H]elp' })
         vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = '[S]earch [K]eymaps' })
         vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = '[S]earch [F]iles' })
-        vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
+        vim.keymap.set('n', '<leader>st', builtin.builtin, { desc = '[S]earch [T]elescope Pickers' })
         vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = '[S]earch current [W]ord' })
         vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch by [G]rep' })
         vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
@@ -659,18 +646,11 @@ require('lazy').setup(
           },
         }
 
-        --TODO: Experiment with disabling blink.cmp and using Neovim's native completion instead.
-        --
         -- LSP servers and clients are able to communicate to each other what features they support.
         --  By default, Neovim doesn't support everything that is in the LSP specification.
         --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
         --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
         --
-        --TODO: Delete this commented line if blink.cmp still works and no regressions.
-        --
-        -- I don't think this next line is needed anymore. LSP says it's unused.
-        -- local capabilities = require('blink.cmp').get_lsp_capabilities()
-
         -- Enable the following language servers
         --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
         --
@@ -682,8 +662,9 @@ require('lazy').setup(
         --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
 
         -- NOTE: LSP Servers
-        -- They **must** be listed in this table to work!
-        -- I think they still need to be installed with Mason, but must be listed here too.
+        -- NOTE: They **must** be listed in this table to work, even if installed with Mason first.
+        -- NOTE: Mason will install automatically if they're added here first.
+        -- NOTE: Process: Add LSP server below, restart nvim to install, restart again (or LspRestart) to enable on files.
         local servers = {
           -- clangd = {},
           -- gopls = {},
@@ -719,16 +700,9 @@ require('lazy').setup(
           },
         }
 
-        -- Ensure the servers and tools above are installed
-        --
         -- To check the current status of installed tools and/or manually install
         -- other tools, you can run
         --    :Mason
-        --
-        -- You can press `g?` for help in this menu.
-        --
-        -- `mason` had to be setup earlier: to configure its options see the
-        -- `dependencies` table for `nvim-lspconfig` above.
         --
         -- You can add other tools here that you want Mason to install
         -- for you, so that they are available from within Neovim.
@@ -740,12 +714,6 @@ require('lazy').setup(
 
         -- The loop below is for overriding the default configuration of LSPs with the ones in the servers table
         for server_name, config in pairs(servers) do
-
-          --TODO: Delete this and next 4 lines if blink.cmp still works and no regressions.
-          -- -- Next line is from blink.cmp documentation, but I'm not sure if this actually changed anything.
-          -- -- Commenting out didn't change anything, might even be a little faster.
-          --
-          -- config.capabilities = require('blink-cmp').get_lsp_capabilities(config.capabilities)
 
           -- These 2 lines for sure work and are correct. They configure, then enable the servers listed above.
           vim.lsp.config(server_name, config)
@@ -958,7 +926,7 @@ require('lazy').setup(
     { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
     { -- Collection of various small independent plugins/modules
-      'echasnovski/mini.nvim',
+      'nvim-mini/mini.nvim',
       config = function()
         -- Better Around/Inside textobjects
         --
@@ -1093,17 +1061,40 @@ require('lazy').setup(
 ==================== TREESITTER                  ====================
 =====================================================================
 --]]
-    { -- Highlight, edit, and navigate code
-      'nvim-treesitter/nvim-treesitter',
-      --FIX: Temporary workaround until I update this plugin. It now defaults to the "main" branch, which is very different!
-      --It may be time to get rid of this plugin because the main dev is an asshole.
-      --To fix 'nvim-treesitter' on the 'main' branch, use this: https://github.com/nvim-lua/kickstart.nvim/pull/1657
-      --Perhaps better, a new plugin was created to sanely bridge the gap and recommended by Vhyrro on YT:
-      --https://github.com/MeanderingProgrammer/treesitter-modules.nvim
-      branch = "master",
-      build = ':TSUpdate',
-      main = 'nvim-treesitter.configs', -- Sets main module to use for opts
-      -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
+    -- FIX: This nvim-treesitter config works. Commenting out to move to 'treesitter-modules.nvim'.
+    -- Delete this if treesitter and completions work with no regressions.
+    --
+    -- { 'nvim-treesitter/nvim-treesitter',  -- Highlight, edit, and navigate code
+    --   --FIX: Temporary workaround until I update this plugin. It now defaults to the "main" branch, which is very different!
+    --   --It may be time to get rid of this plugin because the main dev is an asshole.
+    --   --To fix 'nvim-treesitter' on the 'main' branch, use this: https://github.com/nvim-lua/kickstart.nvim/pull/1657
+    --   --Perhaps better, a new plugin was created to sanely bridge the gap and recommended by Vhyrro on YT:
+    --   --https://github.com/MeanderingProgrammer/treesitter-modules.nvim
+    --   branch = "master",
+    --   build = ':TSUpdate',
+    --   main = 'nvim-treesitter.configs', -- Sets main module to use for opts
+    --   -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
+    --   opts = {
+    --     ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+    --     -- Autoinstall languages that are not installed
+    --     auto_install = true,
+    --     highlight = {
+    --       enable = true,
+    --       -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
+    --       --  If you are experiencing weird indenting issues, add the language to
+    --       --  the list of additional_vim_regex_highlighting and disabled languages for indent.
+    --       additional_vim_regex_highlighting = { 'ruby' },
+    --     },
+    --     indent = { enable = true, disable = { 'ruby' } },
+    --   },
+    -- },
+    {
+    'MeanderingProgrammer/treesitter-modules.nvim',
+    -- This plugin was created to sanely bridge the gap between 'nvim-treesitter' versions and recommended by Vhyrro on YT:
+    -- See: https://github.com/MeanderingProgrammer/treesitter-modules.nvim
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+    ---@module 'treesitter-modules'
+    ---@type ts.mod.UserConfig
       opts = {
         ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
         -- Autoinstall languages that are not installed
@@ -1134,7 +1125,7 @@ require('lazy').setup(
     --  Uncomment any of the lines below to enable them (you will need to restart nvim).
     --
     -- require 'kickstart.plugins.debug',
-    -- require 'kickstart.plugins.indent_line',
+    require 'kickstart.plugins.indent_line',  -- Vertical lines to denote indents.
     -- require 'kickstart.plugins.lint',
     -- require 'kickstart.plugins.autopairs',
     require 'kickstart.plugins.neo-tree',  -- File explorer
