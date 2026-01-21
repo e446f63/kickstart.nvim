@@ -20,6 +20,10 @@
 =====================================================================
 =====================================================================
 
+TODO: Check out this repo for an updated kickstart.nvim file.
+Should probably either move to it, or pull in some of the updates.
+See: https://github.com/oriori1703/kickstart-modular.nvim/tree/maintained-upstream
+
 This file was originally from Kickstart.nvim by T.J. DeVries
 
   Original at: https://github.com/nvim-lua/kickstart.nvim
@@ -232,6 +236,38 @@ rtp:prepend(lazypath)
 -- NOTE: All plugins get installed inside this block (i.e. the rest of this file).
 require('lazy').setup(
   {
+    -- HACK: Testing my new openwrt.nvim plugin!
+    --
+    {
+      dir = "/home/eric/dev/openWRT", -- The absolute path to this project
+      name = "openwrt.nvim",
+      config = function()
+        require("openwrt").setup({
+          -- Router connection settings
+          ssh_host = "192.168.31.1",      -- IP or hostname of your router
+          -- ssh_user = "root",           -- SSH username (optional, uses "root" if omitted)
+          -- ssh_port = 22,               -- SSH port (optional, uses 22 if omitted)
+          -- ssh_key = nil,               -- Path to private key (optional, uses ssh-agent if nil)
+          
+          -- Speed test server (nil = auto-detect closest; defaults to "netperf-west.bufferbloat.net")
+          -- speedtest_server = "netperf-west.bufferbloat.net",
+          -- Available servers:
+          --   "netperf-west.bufferbloat.net" (US West, default)
+          --   "netperf-east.bufferbloat.net" (US East)
+          --   "netperf-eu.bufferbloat.net"   (Europe)
+          --   nil                            (Auto-detect)
+        })
+      end,
+      dependencies = {
+        "MunifTanjim/nui.nvim",
+        { 'nosduco/remote-sshfs.nvim', -- Required for OpenWrtConfig 
+          dependencies = { 'nvim-telescope/telescope.nvim', "nvim-lua/plenary.nvim", },
+          opts = {},
+        }
+      },
+    },
+    -- HACK: End of testing blocks
+
     -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
 
     { 'NMAC427/guess-indent.nvim', opts = {} },-- Detect tabstop and shiftwidth automatically
@@ -667,7 +703,7 @@ require('lazy').setup(
         -- NOTE: Process: Add LSP server below, restart nvim to install, restart again (or LspRestart) to enable on files.
         local servers = {
           -- clangd = {},
-          -- gopls = {},
+          gopls = {},
           -- rust_analyzer = {},
 
           -- **CUSTOM**
@@ -969,7 +1005,7 @@ require('lazy').setup(
         -- end
 
         -- ... and there is more!
-        --  Check out: https://github.com/echasnovski/mini.nvim
+        --  Check out: https://github.com/nvim-mini/mini.nvim
       end,  -- This is the end of the mini.nvim `config = function ()` block.
     },
 
@@ -1101,12 +1137,8 @@ require('lazy').setup(
         auto_install = true,
         highlight = {
           enable = true,
-          -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-          --  If you are experiencing weird indenting issues, add the language to
-          --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-          additional_vim_regex_highlighting = { 'ruby' },
         },
-        indent = { enable = true, disable = { 'ruby' } },
+        indent = { enable = true },
       },
     },
 
