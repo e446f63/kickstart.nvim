@@ -248,14 +248,7 @@ require('lazy').setup(
           -- ssh_user = "root",           -- SSH username (optional, uses "root" if omitted)
           -- ssh_port = 22,               -- SSH port (optional, uses 22 if omitted)
           -- ssh_key = nil,               -- Path to private key (optional, uses ssh-agent if nil)
-          
-          -- Speed test server (nil = auto-detect closest; defaults to "netperf-west.bufferbloat.net")
-          -- speedtest_server = "netperf-west.bufferbloat.net",
-          -- Available servers:
-          --   "netperf-west.bufferbloat.net" (US West, default)
-          --   "netperf-east.bufferbloat.net" (US East)
-          --   "netperf-eu.bufferbloat.net"   (Europe)
-          --   nil                            (Auto-detect)
+          -- speedtest_flags = nil,       -- Flags for `speedtest` command (optional, default is nil)
         })
       end,
       dependencies = {
@@ -731,6 +724,12 @@ require('lazy').setup(
                 },
                 -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
                 -- diagnostics = { disable = { 'missing-fields' } },
+                --
+                -- NOTE: Turn off "Undefined global 'vim'" warnings
+                -- This is just a hack to turn off the warnings.
+                -- Completion for 'vim.' is also currently broken.
+                -- This should not be needed with lazydev.nvim.
+                diagnostics = { globals = { 'vim' } },
               },
             },
           },
