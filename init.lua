@@ -728,11 +728,11 @@ require('lazy').setup(
                 -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
                 -- diagnostics = { disable = { 'missing-fields' } },
                 --
-                -- NOTE: Turn off "Undefined global 'vim'" warnings
-                -- This is just a hack to turn off the warnings.
-                -- Completion for 'vim.' is also currently broken.
-                -- This should not be needed with lazydev.nvim.
-                diagnostics = { globals = { 'vim' } },
+                -- HACK:
+                -- This is a temp fix for lua_ls "Undefined global 'vim'" and not working with lazydev correctly.
+                -- See: https://github.com/folke/lazydev.nvim/issues/136
+                -- Remove once lazydev and/or lua_ls is updated.
+                workspace = { library = vim.api.nvim_get_runtime_file("", true) }
               },
             },
           },
@@ -881,9 +881,13 @@ require('lazy').setup(
 
         sources = {
           --NOTE: Add 'buffer' at the end of this list to include autocomplete for all words in active buffer.
-          default = { 'lazydev', 'lsp', 'path', 'snippets' },
+          default = { 'lazydev', 'lsp', 'path', 'snippets', },
+          -- Tried to get UCI autocomplete to work with blink, but failed miserably so far.
+          -- default = { 'lazydev', 'lsp', 'path', 'snippets', 'openwrt_uci' },
           providers = {
             lazydev = { name = 'LazyDev', module = 'lazydev.integrations.blink', score_offset = 100 },
+          -- Tried to get UCI autocomplete to work with blink, but failed miserably so far.
+            -- openwrt_uci = { name = "OpenWrt UCI", module = "openwrt.integrations.uci_terminal_blink" },
           },
         },
 
