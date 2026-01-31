@@ -266,7 +266,15 @@ require('lazy').setup(
 
     -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
 
-    { 'NMAC427/guess-indent.nvim', opts = {} },-- Detect tabstop and shiftwidth automatically
+    { -- Detect tabstop and shiftwidth automatically
+      'NMAC427/guess-indent.nvim',
+      opts = {
+        on_tab_options = { -- A table of vim options when tabs are detected
+          ["expandtab"] = false, -- default setting
+          ["tabstop"] = 4,
+        },
+      }
+    },
 
     -- NOTE: Use `opts = {}` to automatically pass options to a
     -- plugin's `setup()` function, forcing the plugin to be loaded.
