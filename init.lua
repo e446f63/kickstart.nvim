@@ -241,27 +241,27 @@ require('lazy').setup(
   {
     -- HACK: Testing my new openwrt.nvim plugin!
     -- Uncomment the block below to enable openwrt.nvim for testing.
-    -- {
-    --   dir = "/home/eric/dev/openWRT", -- The absolute path to this project
-    --   name = "openwrt.nvim",
-    --   config = function()
-    --     require("openwrt").setup({
-    --       -- Router connection settings
-    --       ssh_host = "192.168.31.1",      -- IP or hostname of your router
-    --       -- ssh_user = "root",           -- SSH username (optional, uses "root" if omitted)
-    --       -- ssh_port = 22,               -- SSH port (optional, uses 22 if omitted)
-    --       -- ssh_key = nil,               -- Path to private key (optional, uses ssh-agent if nil)
-    --       -- speedtest_flags = nil,       -- Flags for `speedtest` command (optional, default is nil)
-    --     })
-    --   end,
-    --   dependencies = {
-    --     "MunifTanjim/nui.nvim",
-    --     { 'nosduco/remote-sshfs.nvim', -- Required for OpenWrtConfig 
-    --       dependencies = { 'nvim-telescope/telescope.nvim', "nvim-lua/plenary.nvim", },
-    --       opts = {},
-    --     }
-    --   },
-    -- },
+    {
+      dir = "/home/eric/dev/openWRT", -- The absolute path to this project
+      name = "openwrt.nvim",
+      config = function()
+        require("openwrt").setup({
+          -- Router connection settings
+          ssh_host = "192.168.31.1",      -- IP or hostname of your router
+          -- ssh_user = "root",           -- SSH username (optional, uses "root" if omitted)
+          -- ssh_port = 22,               -- SSH port (optional, uses 22 if omitted)
+          -- ssh_key = nil,               -- Path to private key (optional, uses ssh-agent if nil)
+          -- speedtest_flags = nil,       -- Flags for `speedtest` command (optional, default is nil)
+        })
+      end,
+      dependencies = {
+        "MunifTanjim/nui.nvim",
+        { 'nosduco/remote-sshfs.nvim', -- Required for OpenWrtConfig 
+          dependencies = { 'nvim-telescope/telescope.nvim', "nvim-lua/plenary.nvim", },
+          opts = {},
+        }
+      },
+    },
     -- HACK: End of testing blocks
 
     -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
@@ -874,6 +874,25 @@ require('lazy').setup(
         },
 
         completion = {
+          trigger = {
+            show_on_trigger_character = true,
+            -- KEY: Re-trigger completions after accepting a completion that inserts a trigger char
+            show_on_accept_on_trigger_character = true,
+            -- Allow space as a trigger character for UCI terminal (default blocks it)
+            show_on_blocked_trigger_characters = function()
+              if vim.bo.filetype == 'openwrt-uci-terminal' then
+                -- Don't block any trigger characters in UCI terminal
+                return {}
+              end
+              -- Default: block space, newline, tab
+              return { ' ', '\n', '\t' }
+            end,
+          },
+          -- menu = {
+          --   max_height = 6,  -- Limit height to keep it compact
+          --   direction_priority = { 'n', 's' },  -- Open upward (above cursor) first
+          -- },
+
           -- By default, you may press `<c-space>` to show the documentation.
           -- Optionally, set `auto_show = true` to show the documentation after a delay.
           -- documentation = { auto_show = true, auto_show_delay_ms = 500 },
@@ -882,13 +901,20 @@ require('lazy').setup(
 
         sources = {
           --NOTE: Add 'buffer' at the end of this list to include autocomplete for all words in active buffer.
-          default = { 'lazydev', 'lsp', 'path', 'snippets', },
+          -- default = { 'lazydev', 'lsp', 'path', 'snippets', },
           -- Tried to get UCI autocomplete to work with blink, but failed miserably so far.
-          -- default = { 'lazydev', 'lsp', 'path', 'snippets', 'openwrt_uci' },
+          default = { 'lazydev', 'lsp', 'path', 'snippets', 'openwrt' },
           providers = {
             lazydev = { name = 'LazyDev', module = 'lazydev.integrations.blink', score_offset = 100 },
-          -- Tried to get UCI autocomplete to work with blink, but failed miserably so far.
+            -- Tried to get UCI autocomplete to work with blink, but failed miserably so far.
             -- openwrt_uci = { name = "OpenWrt UCI", module = "openwrt.integrations.uci_terminal_blink" },
+            openwrt = {
+              name = "openwrt",
+              module = "openwrt.integrations.uci_terminal_blink",
+              -- enabled = function()
+                -- return vim.bo.filetype == "openwrt-uci-terminal" or vim.bo.filetype == "uci"
+              -- end,
+            },
           },
         },
 
