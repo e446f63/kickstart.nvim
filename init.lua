@@ -740,6 +740,7 @@ require('lazy').setup(
                 -- This is a temp fix for lua_ls "Undefined global 'vim'" and not working with lazydev correctly.
                 -- See: https://github.com/folke/lazydev.nvim/issues/136
                 -- Remove once lazydev and/or lua_ls is updated.
+                -- or rollback the lua_ls server version, which may be a better fix.
                 workspace = { library = vim.api.nvim_get_runtime_file("", true) }
               },
             },
@@ -767,47 +768,6 @@ require('lazy').setup(
         end
       end,
     },
-
-    -- { -- NOTE: Autoformater  --Commented out for now because I don't like autoformatters.
-    --   'stevearc/conform.nvim',
-    --   event = { 'BufWritePre' },
-    --   cmd = { 'ConformInfo' },
-    --   keys = {
-    --     {
-    --       '<leader>f',
-    --       function()
-    --         require('conform').format { async = true, lsp_format = 'fallback' }
-    --       end,
-    --       mode = '',
-    --       desc = '[F]ormat buffer',
-    --     },
-    --   },
-    --   opts = {
-    --     notify_on_error = false,
-    --     format_on_save = function(bufnr)
-    --       -- Disable "format_on_save lsp_fallback" for languages that don't
-    --       -- have a well standardized coding style. You can add additional
-    --       -- languages here or re-enable it for the disabled ones.
-    --       local disable_filetypes = { c = true, cpp = true }
-    --       if disable_filetypes[vim.bo[bufnr].filetype] then
-    --         return nil
-    --       else
-    --         return {
-    --           timeout_ms = 500,
-    --           lsp_format = 'fallback',
-    --         }
-    --       end
-    --     end,
-    --     formatters_by_ft = {
-    --       lua = { 'stylua' },
-    --       -- Conform can also run multiple formatters sequentially
-    --       -- python = { "isort", "black" },
-    --       --
-    --       -- You can use 'stop_after_first' to run the first available formatter from the list
-    --       -- javascript = { "prettierd", "prettier", stop_after_first = true },
-    --     },
-    --   },
-    -- },
 
     { -- NOTE: Blink Autocompletion
       'saghen/blink.cmp',
@@ -882,6 +842,7 @@ require('lazy').setup(
         },
 
         completion = {
+          -- All these 'trigger' settings were done for openwrt autocomplete.
           trigger = {
             show_on_trigger_character = true,
             -- KEY: Re-trigger completions after accepting a completion that inserts a trigger char
@@ -896,6 +857,7 @@ require('lazy').setup(
               return { ' ', '\n', '\t' }
             end,
           },
+          -- Other settings specifically for openwrt autocomplete.
           -- menu = {
           --   max_height = 6,  -- Limit height to keep it compact
           --   direction_priority = { 'n', 's' },  -- Open upward (above cursor) first
@@ -903,7 +865,6 @@ require('lazy').setup(
 
           -- By default, you may press `<c-space>` to show the documentation.
           -- Optionally, set `auto_show = true` to show the documentation after a delay.
-          -- documentation = { auto_show = true, auto_show_delay_ms = 500 },
           documentation = { auto_show = true },
         },
 
@@ -1138,33 +1099,6 @@ require('lazy').setup(
 ==================== TREESITTER                  ====================
 =====================================================================
 --]]
-    -- FIX: This nvim-treesitter config works. Commenting out to move to 'treesitter-modules.nvim'.
-    -- Delete this if treesitter and completions work with no regressions.
-    --
-    -- { 'nvim-treesitter/nvim-treesitter',  -- Highlight, edit, and navigate code
-    --   --FIX: Temporary workaround until I update this plugin. It now defaults to the "main" branch, which is very different!
-    --   --It may be time to get rid of this plugin because the main dev is an asshole.
-    --   --To fix 'nvim-treesitter' on the 'main' branch, use this: https://github.com/nvim-lua/kickstart.nvim/pull/1657
-    --   --Perhaps better, a new plugin was created to sanely bridge the gap and recommended by Vhyrro on YT:
-    --   --https://github.com/MeanderingProgrammer/treesitter-modules.nvim
-    --   branch = "master",
-    --   build = ':TSUpdate',
-    --   main = 'nvim-treesitter.configs', -- Sets main module to use for opts
-    --   -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
-    --   opts = {
-    --     ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
-    --     -- Autoinstall languages that are not installed
-    --     auto_install = true,
-    --     highlight = {
-    --       enable = true,
-    --       -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-    --       --  If you are experiencing weird indenting issues, add the language to
-    --       --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-    --       additional_vim_regex_highlighting = { 'ruby' },
-    --     },
-    --     indent = { enable = true, disable = { 'ruby' } },
-    --   },
-    -- },
     {
     'MeanderingProgrammer/treesitter-modules.nvim',
     -- This plugin was created to sanely bridge the gap between 'nvim-treesitter' versions and recommended by Vhyrro on YT:
