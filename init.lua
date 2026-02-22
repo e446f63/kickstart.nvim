@@ -181,6 +181,17 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 -- Toggle spell checking
 vim.keymap.set('n', '<leader>ts', '<cmd>lua vim.o.spell = not vim.o.spell<CR>', { desc = '[S]pellchecking' })
 
+-- Toggle text wrap, which is mainly for markdown tables.
+vim.keymap.set('n', '<leader>tw', function()
+    vim.wo.wrap = not vim.wo.wrap
+    -- Optional: print a message so you know the current state
+    if vim.wo.wrap then
+        print("Text Wrap: Enabled")
+    else
+        print("Text Wrap: Disabled")
+    end
+end, { desc = '[W]rap text' })
+
 --NOTE:
 --[[
 =====================================================================
@@ -264,7 +275,51 @@ require('lazy').setup(
     },
     -- HACK: End of testing blocks
 
+
     -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
+
+    { -- Pretty rendering of markdown files
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter' },
+      opts = {
+        pipe_table = {
+          enabled = true,
+          head = 'RenderMarkdownTableRow',  -- Turn off bright table headers
+        },
+        heading = {
+          enabled = true,
+          -- Use Ayu's blue instead of orange for headers
+          backgrounds = { 'Type', 'Type', 'Type', 'Type', 'Type', 'Type' },
+          foregrounds = { 'Type', 'Type', 'Type', 'Type', 'Type', 'Type' },
+          -- Default icons are too small
+          icons = {'I ', 'II ', 'III ', 'IIII ', 'IV ', 'V '},
+          sign = false,  -- No extra icons in the sign column
+          position = 'overlay',  -- Overlays the '#' with a cleaner title style
+        },
+        -- Disable indentions
+        indent = {
+          enabled = false
+        },
+        code = {
+          enabled = true,
+          style = 'normal',  -- Turn off language icons & block highlighting
+          disable_background = true,
+          border = 'thin',
+          sign = false,
+          position = 'left',
+          width = 'block',
+        },
+        -- For blockquotes starting with '>'
+        quote = {
+          enabled = true,
+          icon = '│',  -- Simple, vertical bar for quotes
+        },
+        -- Leave bullets and checkboxes alone for now.
+        dash = { enabled = false },
+        bullet = { enabled = false },
+        checkbox = { enabled = false },
+      }
+    },
 
     { -- Detect tabstop and shiftwidth automatically
       'NMAC427/guess-indent.nvim',
@@ -360,7 +415,6 @@ require('lazy').setup(
         spec = {
           { '<leader>s', group = '[S]earch' },
           { '<leader>t', group = '[T]oggle' },
-          { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
         },
       },
     },
@@ -733,15 +787,22 @@ require('lazy').setup(
                 completion = {
                   callSnippet = 'Replace',
                 },
-                -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+                -- Uncomment below to ignore Lua_LS's noisy `missing-fields` warnings
                 -- diagnostics = { disable = { 'missing-fields' } },
-                --
+
                 -- HACK:
-                -- This is a temp fix for lua_ls "Undefined global 'vim'" and not working with lazydev correctly.
+                -- This is a fix for lua_ls "Undefined global 'vim'" and not working with lazydev correctly.
+                -- For some reason, the workspace isn't loaded with the first buffer starting with lua_ls v3.17.0.
+                -- This code forced a tiny library to load, which loads the workspace without a lot of overhead.
                 -- See: https://github.com/folke/lazydev.nvim/issues/136
                 -- Remove once lazydev and/or lua_ls is updated.
-                -- or rollback the lua_ls server version, which may be a better fix.
-                workspace = { library = vim.api.nvim_get_runtime_file("", true) }
+                workspace = {
+                  checkThirdParty = false,
+                  library = {
+                    vim.env.VIMRUNTIME,
+                    { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+                  },
+                },
               },
             },
           },
