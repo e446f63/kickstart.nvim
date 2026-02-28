@@ -278,49 +278,6 @@ require('lazy').setup(
 
     -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
 
-    { -- Pretty rendering of markdown files
-    'MeanderingProgrammer/render-markdown.nvim',
-    dependencies = { 'nvim-treesitter/nvim-treesitter' },
-      opts = {
-        pipe_table = {
-          enabled = true,
-          head = 'RenderMarkdownTableRow',  -- Turn off bright table headers
-        },
-        heading = {
-          enabled = true,
-          -- Use Ayu's blue instead of orange for headers
-          backgrounds = { 'Type', 'Type', 'Type', 'Type', 'Type', 'Type' },
-          foregrounds = { 'Type', 'Type', 'Type', 'Type', 'Type', 'Type' },
-          -- Default icons are too small
-          icons = {'I ', 'II ', 'III ', 'IIII ', 'IV ', 'V '},
-          sign = false,  -- No extra icons in the sign column
-          position = 'overlay',  -- Overlays the '#' with a cleaner title style
-        },
-        -- Disable indentions
-        indent = {
-          enabled = false
-        },
-        code = {
-          enabled = true,
-          style = 'normal',  -- Turn off language icons & block highlighting
-          disable_background = true,
-          border = 'thin',
-          sign = false,
-          position = 'left',
-          width = 'block',
-        },
-        -- For blockquotes starting with '>'
-        quote = {
-          enabled = true,
-          icon = '│',  -- Simple, vertical bar for quotes
-        },
-        -- Leave bullets and checkboxes alone for now.
-        dash = { enabled = false },
-        bullet = { enabled = false },
-        checkbox = { enabled = false },
-      }
-    },
-
     { -- Detect tabstop and shiftwidth automatically
       'NMAC427/guess-indent.nvim',
       opts = {
@@ -1161,12 +1118,18 @@ require('lazy').setup(
 =====================================================================
 --]]
     {
-    'MeanderingProgrammer/treesitter-modules.nvim',
-    -- This plugin was created to sanely bridge the gap between 'nvim-treesitter' versions and recommended by Vhyrro on YT:
-    -- See: https://github.com/MeanderingProgrammer/treesitter-modules.nvim
-    dependencies = { 'nvim-treesitter/nvim-treesitter' },
-    ---@module 'treesitter-modules'
-    ---@type ts.mod.UserConfig
+      'nvim-treesitter/nvim-treesitter',
+      branch = 'main',
+      lazy = false,
+      build = ':TSUpdate'
+    },
+    {
+      'MeanderingProgrammer/treesitter-modules.nvim',
+      -- This plugin was created to sanely bridge the gap between 'nvim-treesitter' versions and recommended by Vhyrro on YT:
+      -- See: https://github.com/MeanderingProgrammer/treesitter-modules.nvim
+      dependencies = { 'nvim-treesitter/nvim-treesitter' },
+      ---@module 'treesitter-modules'
+      ---@type ts.mod.UserConfig
       opts = {
         ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
         -- Autoinstall languages that are not installed
@@ -1176,6 +1139,59 @@ require('lazy').setup(
         },
         indent = { enable = true },
       },
+    },
+
+--NOTE:
+--[[
+=====================================================================
+==================== MARKDOWN RENDERING          ====================
+=====================================================================
+--]]
+    -- Moved here so it's loaded after 'nvim-treesitter'
+    { -- Pretty rendering of markdown files
+      'MeanderingProgrammer/render-markdown.nvim',
+      dependencies = { 'nvim-treesitter/nvim-treesitter' },
+      opts = {
+        pipe_table = {
+          enabled = true,
+          head = 'RenderMarkdownTableRow',  -- Turn off bright table headers
+        },
+        heading = {
+          enabled = true,
+          -- Use Ayu's blue instead of orange for headers
+          backgrounds = { 'Type', 'Type', 'Type', 'Type', 'Type', 'Type' },
+          foregrounds = { 'Type', 'Type', 'Type', 'Type', 'Type', 'Type' },
+          -- Default icons are too small
+          icons = {'I. ', 'II. ', 'III. ', 'IIII. ', 'IV. ', 'V. '},
+          sign = false,  -- No extra icons in the sign column
+          position = 'overlay',  -- Overlays the '#' with a cleaner title style
+        },
+        -- Disable indentions
+        indent = {
+          enabled = false
+        },
+        code = {
+          enabled = true,
+          style = 'normal',  -- Turn off language icons & block highlighting
+          disable_background = true,
+          border = 'thin',
+          sign = false,
+          position = 'left',
+          width = 'block',
+        },
+        -- For blockquotes starting with '>'
+        quote = {
+          enabled = true,
+          icon = '│',  -- Simple, vertical bar for quotes
+        },
+        -- Leave bullets and checkboxes alone for now.
+        dash = { enabled = false },
+        bullet = { enabled = false },
+        checkbox = { enabled = false },
+
+        -- Disable latex support to silence warning in checkhealth
+        latex = { enabled = false },
+      }
     },
 
 --NOTE:
