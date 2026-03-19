@@ -746,20 +746,6 @@ require('lazy').setup(
                 },
                 -- Uncomment below to ignore Lua_LS's noisy `missing-fields` warnings
                 -- diagnostics = { disable = { 'missing-fields' } },
-
-                -- HACK:
-                -- This is a fix for lua_ls "Undefined global 'vim'" and not working with lazydev correctly.
-                -- For some reason, the workspace isn't loaded with the first buffer starting with lua_ls v3.17.0.
-                -- This code forced a tiny library to load, which loads the workspace without a lot of overhead.
-                -- See: https://github.com/folke/lazydev.nvim/issues/136
-                -- Remove once lazydev and/or lua_ls is updated.
-                workspace = {
-                  checkThirdParty = false,
-                  library = {
-                    vim.env.VIMRUNTIME,
-                    { path = "${3rd}/luv/library", words = { "vim%.uv" } },
-                  },
-                },
               },
             },
           },
