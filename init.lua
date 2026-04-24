@@ -934,15 +934,12 @@ require('lazy').setup(
             function() -- sidekick next edit suggestion
               return require("sidekick").nes_jump_or_apply()
             end,
-<<<<<<< HEAD
             -- function() -- if you are using Neovim's native inline completions
             --   return vim.lsp.inline_completion.get()
             -- end,
-=======
             function() -- if you are using Neovim's native inline completions
               return vim.lsp.inline_completion.get()
             end,
->>>>>>> 06b65a7c444cf29682283bb6a881bd3bbd6000cc
             "fallback",
           },
 
