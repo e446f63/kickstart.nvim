@@ -639,17 +639,24 @@ require('lazy').setup(
             -- When you move your cursor, the highlights will be cleared (the second autocommand).
             -- TODO: Review the Neovim docs to see if this functionality is default now.
             local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
-            vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-              buffer = event.buf,
-              group = highlight_augroup,
-              callback = vim.lsp.buf.document_highlight,
-            })
 
-            vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-              buffer = event.buf,
-              group = highlight_augroup,
-              callback = vim.lsp.buf.clear_references,
-            })
+            -- Only run document_highlight and clear_references if the server supports documentHighlight.
+            -- The copilot lsp does not support this, so if it's the only lsp attached... errors.
+            -- Avoids filetypes like 'gitcommit' from throwing errors.
+            local client = vim.lsp.get_client_by_id(event.data.client_id)
+            if client and client.server_capabilities.documentHighlightProvider then
+              vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+                buffer = event.buf,
+                group = highlight_augroup,
+                callback = vim.lsp.buf.document_highlight,
+              })
+
+              vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+                buffer = event.buf,
+                group = highlight_augroup,
+                callback = vim.lsp.buf.clear_references,
+              })
+            end
 
             vim.api.nvim_create_autocmd('LspDetach', {
               group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
@@ -736,7 +743,13 @@ require('lazy').setup(
           -- But for many setups, the LSP (`ts_ls`) will work just fine
           -- ts_ls = {},
 
-          copilot = {},
+          copilot = {
+            settings = {
+              telemetry = {
+                telemetryLevel = "none"
+              },
+            },
+          },
 
           lua_ls = {
             -- cmd = { ... },
@@ -1168,7 +1181,7 @@ require('lazy').setup(
               'diff',
               'diagnostics',
             },
-            lualine_c = { 'filename' },
+            lualine_c = { { 'filename', path = 4 } },
             -- show buffer numbers, not names
             lualine_x = { { 'buffers', mode = 3 } },
             lualine_y = { 'fileformat', 'filetype', 'progress' },
