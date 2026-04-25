@@ -1,10 +1,9 @@
 --[[
 NOTE:
 =====================================================================
-==================== THEMES (COLORSCHEMES)       ====================
+==================== COLORSCHEMES                ====================
 =====================================================================
 --]]
-
 
 return {
   { -- You can easily change to a different colorscheme.
@@ -13,7 +12,8 @@ return {
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
     'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
+    -- Load before all other start plugins.
+    priority = 1000,
     config = function()
       ---@diagnostic disable-next-line: missing-fields
       require('tokyonight').setup {
@@ -26,4 +26,18 @@ return {
       vim.cmd.colorscheme 'tokyonight-night'
     end,
   },
+
+    { 'Luxed/ayu-vim',
+      -- Load before all other start plugins.
+      -- priority = 1000,
+
+      config = function()
+        vim.g.ayu_sign_contrast = 0 -- default, but leaving in for reference
+        vim.g.ayu_extended_palette = 1
+
+        -- Load default colorscheme.
+        -- vim.cmd.colorscheme 'ayu'
+      end,
+    },
+
 }
