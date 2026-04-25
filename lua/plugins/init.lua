@@ -1,0 +1,4 @@
+-- Plugins for neovim
+
+return {}
+
