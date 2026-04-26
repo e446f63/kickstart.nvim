@@ -77,7 +77,7 @@ function M.setup()
     end
   })
 
-  -- Diagnostic Config
+  -- NOTE: Diagnostic Config
   -- See :help vim.diagnostic.Opts
   vim.diagnostic.config {
     update_in_insert = false,
@@ -161,7 +161,7 @@ function M.setup()
   local ensure_installed = vim.tbl_keys(servers or {})
   vim.list_extend(ensure_installed, {
     -- 'stylua' is a formatter, not an LSP server, so it goes here.
-    stylua = {},
+    'stylua',
     -- You can add other tools (non-LSP servers) here that you want Mason to install
   })
 
