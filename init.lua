@@ -994,7 +994,6 @@ require('lazy').setup(
         sources = {
           --NOTE: Add 'buffer' at the end of this list to include autocomplete for all words in active buffer.
           -- default = { 'lazydev', 'lsp', 'path', 'snippets', },
-          -- Tried to get UCI autocomplete to work with blink, but failed miserably so far.
           default = { 'lazydev', 'lsp', 'path', 'snippets', 'openwrt' },
           providers = {
             lazydev = { name = 'LazyDev', module = 'lazydev.integrations.blink', score_offset = 100 },
