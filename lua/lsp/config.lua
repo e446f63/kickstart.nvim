@@ -90,7 +90,18 @@ function M.setup()
     virtual_lines = false, -- Text shows up underneath the line, with virtual lines
 
     -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
-    jump = { float = true },
+    jump = {
+      on_jump = function(diagnostic, bufnr)
+        if not diagnostic then
+          return
+        end
+        vim.diagnostic.open_float(bufnr, {
+          pos = { diagnostic.lnum, diagnostic.col },
+        })
+      end,
+    },
+    -- old (pre 0.12) syntax for the block above.
+    -- jump = { float = true },
   }
 
   -- Enable the language servers
