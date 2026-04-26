@@ -326,7 +326,13 @@ require('lazy').setup({
   -- adds gitsigns recommended keymaps
   -- 'kickstart.plugins.gitsigns',
 
+  -- Import all Lazy plugins from 'lua/plugins/'
   { import = 'plugins' },
+
+  -- Check for 'lua/local/plugins/' path; if exists, import those plugins too.
+  unpack(vim.uv.fs_stat(vim.fn.stdpath 'config' .. '/lua/local/plugins') and {
+    { import = 'local.plugins' },
+  } or {}),
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
