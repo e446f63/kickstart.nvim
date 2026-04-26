@@ -63,8 +63,8 @@ NOTE:
 --]]
 --See `:help vim.o`. For more options, you can see `:help option-list`
 
--- Set statusline. Options: 'lualine', 'mini.statusline'
-vim.g.active_statusline = 'lualine'
+-- Set statusline. Options: 'lualine', 'mini.statusline', or 'default'.
+vim.g.active_statusline = 'mini.statusline'
 
 -- Give pop-ups (like <S>-K) borders
 vim.o.winborder = 'single'
