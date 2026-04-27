@@ -23,6 +23,8 @@
 TODO: Check out this repo for an updated kickstart.nvim file.
 Should probably either move to it, or pull in some of the updates.
 See: https://github.com/oriori1703/kickstart-modular.nvim/tree/maintained-upstream
+UPDATE: This is probably not needed anymore as 'oriori1703' is now a maintainer
+        for kickstart-nvim.
 
 This file was originally from Kickstart.nvim by T.J. DeVries
 
@@ -68,11 +70,11 @@ This file was originally from Kickstart.nvim by T.J. DeVries
 
 -- Set <space> as the leader key
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.mapleader = ' ' --in VS Code
+vim.g.maplocalleader = ' ' --in VS Code
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = true
+vim.g.have_nerd_font = true --in VS Code
 
 --NOTE:
 --[[
@@ -96,7 +98,7 @@ vim.o.mouse = 'a'
 vim.o.showmode = false
 
 -- Sync clipboard between OS and Neovim.
-vim.schedule(function()
+vim.schedule(function() --in VS Code (I think)
   vim.o.clipboard = 'unnamedplus'
 end)
 
@@ -107,8 +109,8 @@ vim.o.breakindent = true
 vim.o.undofile = true
 
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
-vim.o.ignorecase = true
-vim.o.smartcase = true
+vim.o.ignorecase = true --in VS Code
+vim.o.smartcase = true --in VS Code
 
 -- Keep signcolumn on by default
 vim.o.signcolumn = 'yes'
@@ -160,26 +162,27 @@ vim.o.confirm = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' }) --NOT in VS Code
 
 -- Exit terminal mode in the builtin terminal with <ESC><ESC>.
 --
 -- This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }) --NOT in VS Code
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 --
 --  See `:help wincmd` for a list of all window commands
 --  If these don't work, see original kickstart.nvim file for different versions.
+--in VS Code (I think these should stay in VS Code?)
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- Toggle spell checking
-vim.keymap.set('n', '<leader>ts', '<cmd>lua vim.o.spell = not vim.o.spell<CR>', { desc = '[S]pellchecking' })
+vim.keymap.set('n', '<leader>ts', '<cmd>lua vim.o.spell = not vim.o.spell<CR>', { desc = '[S]pellchecking' }) --NOT in VS Code
 
 --NOTE:
 --[[
@@ -191,6 +194,7 @@ vim.keymap.set('n', '<leader>ts', '<cmd>lua vim.o.spell = not vim.o.spell<CR>', 
 
 -- Highlight when yanking (copying) text
 --  See `:help vim.hl.on_yank()`
+--in VS Code
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
