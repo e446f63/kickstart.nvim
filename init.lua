@@ -63,6 +63,10 @@ NOTE:
 --]]
 --See `:help vim.o`. For more options, you can see `:help option-list`
 
+-- Set primary colorscheme. Options: 'tokyonight-night', 'ayu', or 'default'.
+-- See `lua/plugins/colorschemes.lua`
+vim.g.active_colorscheme = 'tokyonight-night'
+
 -- Set statusline. Options: 'lualine', 'mini.statusline', or 'default'.
 vim.g.active_statusline = 'mini.statusline'
 
