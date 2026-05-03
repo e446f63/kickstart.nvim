@@ -23,7 +23,7 @@ function M.setup()
       -- for LSP related items. It sets the mode, buffer and description for us each time.
       local map = function(keys, func, desc, mode)
         mode = mode or 'n'
-        vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+        vim.keymap.set(mode, keys, func, { buf = event.buf, desc = 'LSP: ' .. desc })
       end
 
       -- Rename the variable under your cursor.
@@ -95,9 +95,7 @@ function M.setup()
         if not diagnostic then
           return
         end
-        vim.diagnostic.open_float(bufnr, {
-          pos = { diagnostic.lnum, diagnostic.col },
-        })
+        vim.diagnostic.open_float { bufnr = bufnr }
       end,
     },
     -- old (pre 0.12) syntax for the block above.
@@ -116,7 +114,12 @@ function M.setup()
     --
     -- But for many setups, the LSP (`ts_ls`) will work just fine
     -- ts_ls = {},
-    gopls = {},
+    --
+    -- `gopls` defaults include `gotmpl`, which triggers a `:checkhealth vim.lsp`
+    -- warning unless you also define that filetype. Trim it for now.
+    gopls = {
+      filetypes = { 'go', 'gomod', 'gowork' },
+    },
     pyright = {},
     bashls = {},
     copilot = {
@@ -137,19 +140,25 @@ function M.setup()
           if path ~= vim.fn.stdpath 'config' and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc')) then return end
         end
 
-        client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+        local lua_settings = client.config.settings.Lua
+        if type(lua_settings) ~= 'table' then
+          lua_settings = {}
+        end
+
+        client.config.settings.Lua = vim.tbl_deep_extend('force', lua_settings, {
           runtime = {
             version = 'LuaJIT',
             path = { 'lua/?.lua', 'lua/?/init.lua' },
           },
           workspace = {
             checkThirdParty = false,
-            -- NOTE: this is a lot slower and will cause issues when working on your own configuration.
-            --  See https://github.com/neovim/nvim-lspconfig/issues/3189
-            library = vim.tbl_extend('force', vim.api.nvim_get_runtime_file('', true), {
+            library = {
+              vim.env.VIMRUNTIME,
+              -- For LSP Settings Type Annotations
+              vim.api.nvim_get_runtime_file('lua/lspconfig', false)[1],
               '${3rd}/luv/library',
               '${3rd}/busted/library',
-            }),
+            },
           },
         })
       end,

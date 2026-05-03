@@ -10,7 +10,7 @@ return {
   --NOTE: lualine
   {
     'nvim-lualine/lualine.nvim',
-    enabled = function()
+    cond = function()
       --Set this variable in 'init.lua'
       return vim.g.active_statusline == 'lualine'
     end,

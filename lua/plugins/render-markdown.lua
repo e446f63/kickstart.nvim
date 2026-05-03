@@ -46,8 +46,9 @@ return{
       bullet = { enabled = false },
       checkbox = { enabled = false },
 
-      -- Disable latex support to silence warning in checkhealth
+      -- Disable latex and yaml support to silence warning in checkhealth
       latex = { enabled = false },
+      yaml = { enabled = false },
     }
   },
 }
