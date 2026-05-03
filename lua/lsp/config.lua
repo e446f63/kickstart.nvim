@@ -140,6 +140,46 @@ function M.setup()
           if path ~= vim.fn.stdpath 'config' and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc')) then return end
         end
 
+        -- Keep LuaLS fast by giving it a small, curated library.
+        --
+        -- We intentionally do NOT point at all of `stdpath('data')/lazy`, since
+        -- that causes LuaLS to index whole plugin repos (including tests/docs)
+        -- and slows completions and diagnostics dramatically.
+        --
+        -- Instead, add only the plugin files that define the annotation types we
+        -- actually use in this config, such as `LazySpec`, `MasonSettings`, and
+        -- `blink.cmp.Config`.
+        local function plugin_type_file(plugin, relpath)
+          local path = vim.fn.stdpath('data') .. '/lazy/' .. plugin .. '/' .. relpath
+          return vim.uv.fs_stat(path) and path or nil
+        end
+
+        local library = {
+          vim.env.VIMRUNTIME,
+          -- Include lspconfig's own LuaCATS annotations so LuaLS understands the
+          -- LSP settings tables used in this config.
+          vim.api.nvim_get_runtime_file('lua/lspconfig', false)[1],
+          '${3rd}/luv/library',
+          '${3rd}/busted/library',
+        }
+
+        -- These are the specific plugin files that declare the annotation types
+        -- referenced throughout this repo. Keeping the list explicit preserves
+        -- performance and makes future type additions intentional.
+        for _, path in ipairs {
+          plugin_type_file('lazy.nvim', 'lua/lazy/types.lua'),
+          plugin_type_file('mason.nvim', 'lua/mason/settings.lua'),
+          plugin_type_file('gitsigns.nvim', 'lua/gitsigns/config.lua'),
+          plugin_type_file('which-key.nvim', 'lua/which-key/config.lua'),
+          plugin_type_file('todo-comments.nvim', 'lua/todo-comments/config.lua'),
+          plugin_type_file('blink.cmp', 'lua/blink/cmp/config/init.lua'),
+          plugin_type_file('blink.cmp', 'lua/blink/cmp/config/types_partial.lua'),
+        } do
+          if path then
+            table.insert(library, path)
+          end
+        end
+
         local lua_settings = client.config.settings.Lua
         if type(lua_settings) ~= 'table' then
           lua_settings = {}
@@ -152,13 +192,9 @@ function M.setup()
           },
           workspace = {
             checkThirdParty = false,
-            library = {
-              vim.env.VIMRUNTIME,
-              -- For LSP Settings Type Annotations
-              vim.api.nvim_get_runtime_file('lua/lspconfig', false)[1],
-              '${3rd}/luv/library',
-              '${3rd}/busted/library',
-            },
+            -- Use the curated library above so we get plugin annotation types
+            -- without regressing to the very broad, slow upstream workspace.
+            library = library,
           },
         })
       end,
