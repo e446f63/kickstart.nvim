@@ -70,11 +70,12 @@ NOTE:
 --See `:help vim.o`. For more options, you can see `:help option-list`
 
 -- Set primary colorscheme. Options: 'tokyonight-night', 'ayu', or 'default'.
+--   also 'shatur-ayu-dark' if uncommented.
 -- See `lua/plugins/colorschemes.lua`
 vim.g.active_colorscheme = 'tokyonight-night'
 
 -- Set statusline. Options: 'lualine', 'mini.statusline', or 'default'.
-vim.g.active_statusline = 'mini.statusline'
+vim.g.active_statusline = 'lualine'
 
 -- Give pop-ups (like <S>-K) borders
 vim.o.winborder = 'single'
@@ -305,9 +306,9 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
-        { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
-        { '<leader>t', group = '[T]oggle' },
-        { '<leader>a', group = '[A]gents (Sidekick)' },
+        { '<leader>s', group = '[S]earch', mode = { 'n', 'v' }, icon = "" },
+        { '<leader>t', group = '[T]oggle', icon = "" },
+        { '<leader>a', group = '[A]gents (Sidekick)', icon = "" },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } }, -- Enable gitsigns recommended keymaps first
         { 'gr', group = 'LSP Actions', mode = { 'n' } },
       },

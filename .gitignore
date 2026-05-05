@@ -11,4 +11,7 @@ spell/
 # merge conflicts.
 # lazy-lock.json
 
+# Ignore the damn .codex file
+.codex
+
 .DS_Store
