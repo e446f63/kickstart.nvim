@@ -92,7 +92,9 @@ vim.o.relativenumber = true
 vim.o.mouse = 'a'
 
 -- Don't show the mode, since it's already in the status line
-vim.o.showmode = false
+-- Unless using the default statusline, then we need it
+-- vim.o.showmode = false  -- original line just disabled it completely
+vim.o.showmode = vim.g.active_statusline == 'default'
 
 -- Sync clipboard between OS and Neovim.
 vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
