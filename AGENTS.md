@@ -13,6 +13,18 @@ This repo is a customized, modularized fork-derived Neovim config.
 
 Do **not** blindly merge upstream Kickstart into the active config branch.
 
+When the user asks to compare the current config with upstream, evaluate
+upstream changes, or identify upstream changes worth incorporating, the first
+action must be to fetch upstream and fast-forward `vendor/kickstart` so it
+exactly matches `upstream/master`. Verify that both refs resolve to the same
+commit before beginning the comparison.
+
+If the user's request also contains an instruction that conflicts with updating
+the branch, such as "make no changes," do not skip the update or use another
+source as a substitute. Remind the user that the upstream-review workflow
+requires fast-forwarding `vendor/kickstart`, and ask for confirmation before
+proceeding.
+
 This repo no longer matches upstream structurally:
 
 - upstream keeps most behavior in a large `init.lua`
@@ -27,7 +39,7 @@ Because of that, upstream updates should be handled as:
 2. review upstream changes by subsystem
 3. map them through `UPSTREAM_MAPPING.md`
 4. report upstream changes and `main` mappings to user for review
-4. manually port relevant changes into `main` once agreed upon
+5. manually port relevant changes into `main` once agreed upon
 
 Summary rule:
 
