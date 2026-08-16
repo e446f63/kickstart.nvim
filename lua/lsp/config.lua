@@ -139,9 +139,10 @@ function M.setup()
     -- jump = { float = true },
   }
 
-  -- Enable the language servers
+  -- NOTE: Enable the language servers
   --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
   --  See `:help lsp-config` for information about keys and how to configure
+  --
   ---@type table<string, vim.lsp.Config>
   local servers = {
     -- clangd = {},

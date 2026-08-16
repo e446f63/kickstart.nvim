@@ -20,7 +20,9 @@ return {
         opts = {},
       },
       -- Maps LSP server names between nvim-lspconfig and Mason package names.
-      'mason-org/mason-lspconfig.nvim',
+      -- 'opts' correctly initializes the plugin while preventing automatic
+      -- enablement of the servers (we do this manually in 'lsp/config.lua').
+      { 'mason-org/mason-lspconfig.nvim', opts = { automatic_enable = false } },
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP.
