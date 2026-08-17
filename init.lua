@@ -71,6 +71,7 @@ NOTE:
 ==================== OPTIONS                     ====================
 =====================================================================
 --]]
+
 --See `:help vim.o`. For more options, you can see `:help option-list`
 
 -- Set primary colorscheme. Options: 'tokyonight-night', 'ayu', or 'default'.
