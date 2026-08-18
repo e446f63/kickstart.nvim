@@ -37,7 +37,7 @@ Because of that, upstream updates should be handled as:
 
 1. fetch/update `vendor/kickstart`
 2. review upstream changes by subsystem
-3. map them through `UPSTREAM_MAPPING.md`
+3. map them through `doc/UPSTREAM_MAPPING.md`
 4. report upstream changes and `main` mappings to user for review
 5. manually port relevant changes into `main` once agreed upon
 
@@ -73,4 +73,4 @@ When changing config, prioritize checking:
 
 ## Key References
 
-- `UPSTREAM_MAPPING.md`: maps upstream Kickstart sections into this repo
+- `doc/UPSTREAM_MAPPING.md`: maps upstream Kickstart sections into this repo
