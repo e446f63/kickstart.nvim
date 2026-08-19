@@ -5,7 +5,9 @@ This is aliased to `vim` in .bashrc (`alias vim='nvim -u clean-init.lua'`)
 
 -------------------- INITAL SETTINGS -------------------------------------------
 
-vim.loader.enable()
+vim.g.netrw_banner = 0
+vim.g.netrw_liststyle = 3 -- tree view
+vim.g.netrw_winsize = 25
 
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
@@ -60,6 +62,8 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'quickfix list' })
 
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+
+vim.keymap.set('n', '\\', '<cmd>Lexplore<CR>', { desc = 'File explorer (netrw)' })
 
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
