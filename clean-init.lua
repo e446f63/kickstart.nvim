@@ -3,7 +3,7 @@ Clean 'init.lua' with minimal QoL settings for fast file editing.
 This is aliased to `vim` in .bashrc (`alias vim='nvim -u clean-init.lua'`)
 --]]
 
--------------------- INITAL SETTINGS -------------------------------------------
+---------- INITAL SETTINGS -----------------------------------------------------
 
 vim.g.netrw_banner = 0
 vim.g.netrw_liststyle = 3 -- tree view
@@ -19,7 +19,7 @@ if vim.g.vscode then
   return
 end
 
--------------------- OPTIONS ---------------------------------------------------
+---------- OPTIONS -------------------------------------------------------------
 
 vim.o.number = true
 vim.o.relativenumber = true
@@ -55,7 +55,7 @@ vim.o.softtabstop = -1
 
 vim.o.confirm = true
 
--------------------- KEYMAPS ---------------------------------------------------
+---------- KEYMAPS -------------------------------------------------------------
 
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
@@ -70,7 +70,7 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
--------------------- AUTOCOMMANDS ----------------------------------------------
+---------- AUTOCOMMANDS --------------------------------------------------------
 
 vim.api.nvim_create_autocmd('TextYankPost', {
   desc = 'Highlight when yanking (copying) text',
@@ -78,7 +78,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function() vim.hl.on_yank() end,
 })
 
--------------------- PLUGINS ---------------------------------------------------
+---------- PLUGINS -------------------------------------------------------------
 
 vim.pack.add({
 	{ src = 'https://github.com/folke/which-key.nvim', name = 'which-key' }
