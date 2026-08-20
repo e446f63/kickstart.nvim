@@ -55,6 +55,34 @@ vim.o.softtabstop = -1
 
 vim.o.confirm = true
 
+---------- MARKDOWN HIGHLIGHTS -------------------------------------------------
+-- Used to colorize markdown headers with the default colorscheme
+
+---@param source string
+---@return vim.api.keyset.highlight
+-- Take in the colorscheme's named style and bold it.
+local function markdown_heading_style(source)
+  local source_style = vim.api.nvim_get_hl(0, { name = source, link = false, })
+
+  return {
+    fg = source_style.fg,
+    ctermfg = source_style.ctermfg,
+    bold = true,
+    cterm = { bold = true },
+  }
+end
+
+-- 'String' uses the default colorscheme's green color
+local heading_green = markdown_heading_style('String')
+-- 'Identifier' uses the default colorscheme's blue color
+local heading_blue = markdown_heading_style('Identifier')
+
+vim.api.nvim_set_hl(0, '@markup.heading.1.markdown', heading_green)
+
+for level = 2, 6 do
+  vim.api.nvim_set_hl( 0, ('@markup.heading.%d.markdown'):format(level), heading_blue)
+end
+
 ---------- KEYMAPS -------------------------------------------------------------
 
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
