@@ -8,7 +8,6 @@ return {
     on_tab_options = {
       expandtab = false,
       tabstop = 4,
-    }
-  }
+    },
+  },
 }
-

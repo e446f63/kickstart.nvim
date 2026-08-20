@@ -9,16 +9,17 @@ NOTE:
 -- Colorize window separator to be able to tell splits apart easier.
 -- This only works if using global statuline, which is set by:
 -- `:set laststatus=3` -- instead of default '2'
-vim.api.nvim_create_autocmd("ColorScheme", {
+vim.api.nvim_create_autocmd('ColorScheme', {
   callback = function()
-    vim.api.nvim_set_hl(0, "WinSeparator", { link = "FloatBorder" })
-    vim.api.nvim_set_hl(0, "WhichKeyIcon", { link = "String" })
+    vim.api.nvim_set_hl(0, 'WinSeparator', { link = 'FloatBorder' })
+    vim.api.nvim_set_hl(0, 'WhichKeyIcon', { link = 'String' })
   end,
 })
 
 return {
   {
     'folke/tokyonight.nvim',
+    lazy = vim.g.active_colorscheme ~= 'tokyonight-night',
     -- Load before all other start plugins, if colorscheme is set as default.
     priority = vim.g.active_colorscheme == 'tokyonight-night' and 1000 or 0,
     config = function()
@@ -29,22 +30,21 @@ return {
         },
         -- Darken theme's background (same bg as my Ayu config).
         on_colors = function(c)
-          c.bg = "#0D1017"
-          c.bg_dark = "#0A0C12"
-          c.bg_sidebar = "#0D1017"
-          c. bg_float = "#0D1017"
+          c.bg = '#0D1017'
+          c.bg_dark = '#0A0C12'
+          c.bg_sidebar = '#0D1017'
+          c.bg_float = '#0D1017'
         end,
       }
 
       -- Load the colorscheme here, if colorscheme is set as default.
-      if vim.g.active_colorscheme == 'tokyonight-night' then
-        vim.cmd.colorscheme 'tokyonight-night'
-      end
+      if vim.g.active_colorscheme == 'tokyonight-night' then vim.cmd.colorscheme 'tokyonight-night' end
     end,
   },
 
   {
     'Luxed/ayu-vim',
+    lazy = vim.g.active_colorscheme ~= 'ayu',
     -- Load before all other start plugins, if colorscheme is set as default.
     priority = vim.g.active_colorscheme == 'ayu' and 1000 or 0,
 
@@ -53,9 +53,7 @@ return {
       vim.g.ayu_extended_palette = 1
 
       -- Load the colorscheme, if colorscheme is set as default.
-      if vim.g.active_colorscheme == 'ayu' then
-        vim.cmd.colorscheme 'ayu'
-      end
+      if vim.g.active_colorscheme == 'ayu' then vim.cmd.colorscheme 'ayu' end
     end,
   },
 
