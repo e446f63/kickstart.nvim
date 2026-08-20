@@ -220,6 +220,15 @@ vim.keymap.set('n', '<leader>tw', function()
     end
 end, { desc = 'wrap text' })
 
+-- Sidekick / Copilot / NES Keymaps
+-- Jump or Apply the next edit suggestion from Sidekick's NES (Next Edit Suggestion) system.
+--  See `lua/plugins/sidekick.lua` for more information on Sidekick and NES.
+-- In Insert mode, this is handled by Blink with the `<Tab>` key, so this is for Normal mode.
+-- <leader>aa also works, but <leader><Tab> is quicker.
+vim.keymap.set( "n", "<leader><Tab>", function()
+  require("sidekick").nes_jump_or_apply()
+end, { desc = "goto / apply NES" })
+
 -- DNF Keymaps
 -- Get the DNF advisory info (changelogs) for highlighted text in Visual mode
 vim.keymap.set("x", "<leader>da", function()
@@ -246,13 +255,6 @@ vim.keymap.set("x", "<leader>di", function()
   vim.bo.swapfile = false
   vim.api.nvim_buf_set_lines(0, 0, -1, false, out)
 end, { silent = true, desc = "info for selected package" })
-
--- Sidekick / Copilot / NES Keymaps
--- Jump or Apply the next edit suggestion from Sidekick's NES (Next Edit Suggestion) system.
---  See `lua/plugins/sidekick.lua` for more information on Sidekick and NES.
--- In Insert mode, this is handled by Blink with the `<Tab>` key, so this is for Normal mode.
--- <leader>aa also works, but <leader><Tab> is quicker.
-vim.keymap.set( "n", "<leader><Tab>", function() require("sidekick").nes_jump_or_apply() end, { desc = "goto / apply NES" })
 
 --[[
 NOTE:
@@ -425,16 +427,15 @@ require('lazy').setup({
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
 
-  -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
+  -- The next step on your Neovim journey: Add/Configure additional plugins for Kickstart
   --
-  --  Here are some example plugins that I've included in the Kickstart repository.
-  --  To install any of these, move the '.lua' file from inside the kickstart directory to `lua/plugins/` and restart Neovim.
+  --  Here are some example plugins included in the Kickstart repository.
+  --  To install any of these, move the '.lua' file from `lua/kickstart/` to `lua/plugins/` and restart Neovim.
   --  Lazy will then automatically install them with the `import = 'plugins'` statement.
   --
   -- 'kickstart.plugins.debug',
   -- 'kickstart.plugins.lint',
   -- 'kickstart.plugins.autopairs',
-  -- 'kickstart.plugins.gitsigns', -- (installed) adds gitsigns recommended keymaps
 
   -- Import all Lazy plugins from 'lua/plugins/'
   { import = 'plugins' },
