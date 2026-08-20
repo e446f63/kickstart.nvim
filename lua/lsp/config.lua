@@ -207,6 +207,7 @@ function M.setup()
         for _, path in ipairs {
           plugin_type_file('lazy.nvim', 'lua/lazy/types.lua'),
           plugin_type_file('mason.nvim', 'lua/mason/settings.lua'),
+          plugin_type_file('conform.nvim', 'lua/conform/types.lua'),
           plugin_type_file('gitsigns.nvim', 'lua/gitsigns/config.lua'),
           plugin_type_file('which-key.nvim', 'lua/which-key/config.lua'),
           plugin_type_file('todo-comments.nvim', 'lua/todo-comments/config.lua'),
