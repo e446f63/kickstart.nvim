@@ -143,6 +143,9 @@ vim.o.cursorline = false
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.o.scrolloff = 10
 
+-- Use 'Terminal-mode' (i.e. Insert mode) when opening `:terminal`
+vim.cmd('autocmd TermOpen * startinsert')
+
 -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
 -- instead raise a dialog asking if you wish to save the current file(s)
 -- See `:help 'confirm'`

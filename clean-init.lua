@@ -53,6 +53,8 @@ vim.o.tabstop = 2
 vim.o.shiftwidth = 0
 vim.o.softtabstop = -1
 
+vim.cmd('autocmd TermOpen * startinsert')
+
 vim.o.confirm = true
 
 ---------- MARKDOWN HIGHLIGHTS -------------------------------------------------
