@@ -1,6 +1,6 @@
 --[[ 
 Clean 'init.lua' with minimal QoL settings for fast file editing.
-This is aliased to `vim` in .bashrc (`alias vim='nvim -u clean-init.lua'`)
+In Linux, this is aliased to `vim` in .bashrc (`alias vim='nvim -u clean-init.lua'`)
 --]]
 
 ---------- INITAL SETTINGS -----------------------------------------------------
@@ -107,6 +107,10 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
   callback = function() vim.hl.on_yank() end,
 })
+
+-- Auto-sync saved `clean-init.lua` to the Windows Neovim `init.lua`
+-- 'pcall' to silently fail when running on Windows where the script doesn't exist
+pcall(require, 'scripts.windows-init-sync')
 
 ---------- PLUGINS -------------------------------------------------------------
 

@@ -275,6 +275,9 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function() vim.hl.on_yank() end,
 })
 
+-- Auto-sync saved `clean-init.lua` to the Windows Neovim `init.lua`
+require('scripts.windows-init-sync')
+
 --[[
 NOTE:
 =====================================================================
