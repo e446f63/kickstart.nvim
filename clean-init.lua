@@ -100,6 +100,9 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+-- Open the Neovim config directory in Netrw
+vim.keymap.set('n', '<leader>sn', function() vim.cmd.edit(vim.fn.stdpath 'config') end, { desc = 'neovim files' })
+
 ---------- AUTOCOMMANDS --------------------------------------------------------
 
 vim.api.nvim_create_autocmd('TextYankPost', {
@@ -122,5 +125,8 @@ require('which-key').setup({
 	preset = "helix",
 	delay = 0,
 	win = { border = "none" },
+  spec = {
+    { '<leader>s', group = 'search (netrw)', mode = { 'n', 'v' } },
+  },
 })
 
