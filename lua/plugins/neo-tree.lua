@@ -14,6 +14,7 @@ return {
   keys = {
     { '\\', ':Neotree toggle reveal<CR>', desc = 'NeoTree reveal', silent = true },
     -- My custom keymap for the hell of it
+    -- 'show' opens the window but does not move focus to it.
     { '<leader>tn', ':Neotree toggle show<CR>', desc = 'Neo-tree' },
   },
   opts = {
@@ -24,11 +25,13 @@ return {
         -- hide_dotfiles = true,
         -- hide_hidden = true,
       },
-      window = {
-        mappings = {
-          ['\\'] = 'close_window',
-        },
-      },
+      -- Not needed because key is mapped to 'toggle'
+      -- If key is mapped to 'focus' or 'show', this keymap is used to close window.
+      -- window = {
+      --   mappings = {
+      --     -- ['\\'] = 'close_window',
+      --   },
+      -- },
     },
   },
 }
