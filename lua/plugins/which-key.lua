@@ -38,7 +38,6 @@ return {
       { '<leader>t', group = 'toggle' },
       { '<leader>a', group = 'AI (Sidekick)', icon = ' ' },
       { '<leader>d', group = 'dnf commands', mode = { 'v' }, icon = ' ' },
-      { '<leader>tn', desc = 'neo-tree' },
       { '<leader>h', group = 'git hunk', mode = { 'n', 'v' } },
       { 'gr', group = 'LSP Actions', mode = { 'n' } },
     },

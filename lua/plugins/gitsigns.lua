@@ -59,7 +59,7 @@ return {
       map('n', '<leader>hq', gitsigns.setqflist, { desc = 'git hunk [q]uickfix list (all changes in this file)' })
       -- Toggles
       map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = 'git show [b]lame line' })
-      map('n', '<leader>tw', gitsigns.toggle_word_diff, { desc = 'git intra-line [w]ord diff' })
+      map('n', '<leader>td', gitsigns.toggle_word_diff, { desc = 'git intra-line word [d]iff' })
 
       -- Text object
       map({ 'o', 'x' }, 'ih', gitsigns.select_hunk)

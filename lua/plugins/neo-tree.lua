@@ -12,9 +12,9 @@ return {
   lazy = false,
 
   keys = {
-    { '\\', ':Neotree reveal<CR>', desc = 'NeoTree reveal', silent = true },
+    { '\\', ':Neotree toggle reveal<CR>', desc = 'NeoTree reveal', silent = true },
     -- My custom keymap for the hell of it
-    { '<leader>tn', ':Neotree toggle show<CR>', desc = '[n]eo-tree' },
+    { '<leader>tn', ':Neotree toggle show<CR>', desc = 'Neo-tree' },
   },
   opts = {
     close_if_last_window = true,
