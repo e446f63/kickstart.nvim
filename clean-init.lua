@@ -93,8 +93,8 @@ vim.api.nvim_set_hl(0, 'Normal', { bg = '#000000', update = true })
 ---------- AUTOCOMMANDS --------------------------------------------------------
 
 vim.api.nvim_create_autocmd('TextYankPost', {
-  desc = 'Highlight when yanking (copying) text',
-  group = vim.api.nvim_create_augroup('kickstart-highlight-yank', { clear = true }),
+  desc = 'Highlight when yanking or deleting text',
+  group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
   callback = function() vim.hl.on_yank() end,
 })
 
@@ -138,7 +138,7 @@ local function create_sidebar()
     end
   end
 
-  -- -- Create a new buffer directly (false = unlisted, true = scratch)
+  -- Create a new buffer directly (false = unlisted, true = scratch)
   local buf = vim.fn.bufadd(sidebar_file)
   
   -- Load buffer and configure it
@@ -175,9 +175,6 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'quickfix l
 
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
--- Open Netrw is sidebar (replaced by custom sidebar function)
--- vim.keymap.set('n', '\\', '<cmd>Lexplore<CR>', { desc = 'File explorer (netrw)' })
-
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
@@ -187,5 +184,5 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 vim.keymap.set('n', '<leader>n', function() vim.cmd.edit(vim.fn.stdpath 'config') end, { desc = 'neovim files' })
 
 -- Toggle the sidebar
-vim.keymap.set('n', '<leader>s', create_sidebar, {desc = "toggle sidebar"})
+vim.keymap.set('n', '<leader>s', function() create_sidebar() end, {desc = "toggle sidebar"})
 
