@@ -53,9 +53,9 @@ vim.o.tabstop = 2
 vim.o.shiftwidth = 0
 vim.o.softtabstop = -1
 
-vim.cmd 'autocmd TermOpen * startinsert'
-
 vim.o.confirm = true
+
+vim.cmd 'autocmd TermOpen * startinsert'
 
 ---------- MARKDOWN HIGHLIGHTS -------------------------------------------------
 -- Used to colorize markdown headers with the default colorscheme
@@ -88,26 +88,7 @@ end
 ---------- BLACK BACKGROUND ----------------------------------------------------
 
 -- Set pure black background for colorscheme by default
--- Switching colorschemes resets this for that session
 vim.api.nvim_set_hl(0, 'Normal', { bg = '#000000', update = true })
-
----------- KEYMAPS -------------------------------------------------------------
-
-vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
-
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'quickfix list' })
-
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-
-vim.keymap.set('n', '\\', '<cmd>Lexplore<CR>', { desc = 'File explorer (netrw)' })
-
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
-
--- Open the Neovim config directory in Netrw
-vim.keymap.set('n', '<leader>n', function() vim.cmd.edit(vim.fn.stdpath 'config') end, { desc = 'neovim files' })
 
 ---------- AUTOCOMMANDS --------------------------------------------------------
 
@@ -134,5 +115,71 @@ require('which-key').setup {
   spec = {
     -- Numbered list of current buffers
     { '<leader>b', group = 'buffers', expand = function() return require('which-key.extras').expand.buf() end },
+    -- Toggle sidebar on and off
+    -- { '<leader>s', function() create_sidebar() end, desc = "toggle sidebar" },
   },
 }
+
+---------- SIDEBAR -------------------------------------------------------------
+-- Create a read-only left sidebar (experimental)
+
+local sidebar_title = "Sidebar"
+
+-- Create the sidebar
+local function create_sidebar()
+  -- Close if already open
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    local b = vim.api.nvim_win_get_buf(win)
+    if vim.api.nvim_buf_get_name(b):match(sidebar_title .. "$") then
+      vim.api.nvim_win_close(win, true)
+      return
+    end
+  end
+
+  -- Create a new buffer directly (false = unlisted, true = scratch)
+  local buf = vim.api.nvim_create_buf(false, true)
+  
+  -- Name buffer and configure it
+  vim.api.nvim_buf_set_name(buf, sidebar_title)
+  vim.bo[buf].buftype = "nofile"
+  vim.bo[buf].bufhidden = "wipe"
+  vim.bo[buf].swapfile = false
+
+  -- Open the split natively 
+  -- 'false' prevents entering the window
+  vim.api.nvim_open_win(buf, false, {
+    split = "left",
+    width = 30,
+    style = "minimal"
+  })
+end
+
+-- Create the sidebar by default, but after Neovim launches
+-- vim.api.nvim_create_autocmd("VimEnter", {
+--   callback = function()
+--     create_sidebar()
+--   end,
+--   once = true
+-- })
+
+---------- KEYMAPS -------------------------------------------------------------
+
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+
+vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'quickfix list' })
+
+vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+
+vim.keymap.set('n', '\\', '<cmd>Lexplore<CR>', { desc = 'File explorer (netrw)' })
+
+vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+-- Open the Neovim config directory in Netrw
+vim.keymap.set('n', '<leader>n', function() vim.cmd.edit(vim.fn.stdpath 'config') end, { desc = 'neovim files' })
+
+-- Toggle the sidebar
+vim.keymap.set('n', '<leader>s', create_sidebar, {desc = "toggle sidebar"})
+
