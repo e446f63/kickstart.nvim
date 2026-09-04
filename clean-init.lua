@@ -123,24 +123,32 @@ require('which-key').setup {
 ---------- SIDEBAR -------------------------------------------------------------
 -- Create a read-only left sidebar (experimental)
 
-local sidebar_title = "Sidebar"
+-- local sidebar_title = "Sidebar"
+local sidebar_filename = "sidebar"
 
 -- Create the sidebar
 local function create_sidebar()
+  -- Define the file to open in the sidebar
+  local sidebar_file = vim.fn.stdpath("config") .. "/" .. sidebar_filename
+
   -- Close if already open
   for _, win in ipairs(vim.api.nvim_list_wins()) do
     local b = vim.api.nvim_win_get_buf(win)
-    if vim.api.nvim_buf_get_name(b):match(sidebar_title .. "$") then
+    -- if vim.api.nvim_buf_get_name(b):match(sidebar_title .. "|" .. sidebar_file .. "$") then
+    if vim.api.nvim_buf_get_name(b):match(sidebar_filename .. "$") then
       vim.api.nvim_win_close(win, true)
       return
     end
   end
 
-  -- Create a new buffer directly (false = unlisted, true = scratch)
-  local buf = vim.api.nvim_create_buf(false, true)
+  -- -- Create a new buffer directly (false = unlisted, true = scratch)
+  -- local buf = vim.api.nvim_create_buf(false, true)
+  local buf = vim.fn.bufadd(sidebar_file)
   
-  -- Name buffer and configure it
-  vim.api.nvim_buf_set_name(buf, sidebar_title)
+  -- -- Name buffer and configure it
+  -- vim.api.nvim_buf_set_name(buf, sidebar_title)
+  -- Load buffer and configure it
+  vim.fn.bufload(buf)
   vim.bo[buf].buftype = "nofile"
   vim.bo[buf].bufhidden = "wipe"
   vim.bo[buf].swapfile = false
@@ -155,12 +163,15 @@ local function create_sidebar()
 end
 
 -- Create the sidebar by default, but after Neovim launches
--- vim.api.nvim_create_autocmd("VimEnter", {
---   callback = function()
---     create_sidebar()
---   end,
---   once = true
--- })
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+-- Only auto-open the sidebar if a file was passed at launch
+    if vim.fn.argc() > 0 then
+      create_sidebar()
+    end
+  end,
+  once = true
+})
 
 ---------- KEYMAPS -------------------------------------------------------------
 

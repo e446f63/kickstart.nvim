@@ -1,0 +1,48 @@
+|----------------------------|
+This is sidebar
+
+Sidebar is a special window
+
+It's purpose is to take space
+
+Space that often shows files
+
+But I don't need files here
+
+Real text often starts here
+
+But this space is too far left
+
+Starting text here is silly
+
+Real text should be centered
+
+Or at least close to centered
+
+Where the eyes naturally look
+
+That is more comfortable
+|----------------------------|
+This is my sidebar
+
+There are many like it
+
+But this one is mine
+
+Without me, sidebar is nothing
+
+Without sidebar, I am nothing
+|----------------------------|
+This is the end of sidebar
+
+This all may look distracting
+
+But becomes normal over time
+
+The words just fade away
+
+Eventually this becomes normal
+
+Comfortable and expected even
+
+This is my sidebar. Fin.
