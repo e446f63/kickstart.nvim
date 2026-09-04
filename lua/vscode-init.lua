@@ -16,11 +16,9 @@ if vim.uv.fs_stat(mini_path) then
 end
 
 vim.api.nvim_create_autocmd('TextYankPost', {
-  desc = 'Highlight when yanking text',
-  group = vim.api.nvim_create_augroup('kickstart-highlight-yank-vscode', { clear = true }),
-  callback = function()
-    vim.highlight.on_yank()
-  end,
+  desc = 'Highlight when yanking or deleting text',
+  group = vim.api.nvim_create_augroup('highlight-yank', { clear = true }),
+  callback = function() vim.hl.on_yank() end,
 })
 
 return {}

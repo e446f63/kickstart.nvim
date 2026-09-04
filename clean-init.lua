@@ -1,4 +1,4 @@
---[[ 
+--[[
 Clean 'init.lua' with minimal QoL settings for fast file editing.
 In Linux, this is aliased to `vim` in .bashrc (`alias vim='nvim -u clean-init.lua'`)
 --]]
@@ -98,8 +98,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function() vim.hl.on_yank() end,
 })
 
--- Auto-sync saved `clean-init.lua` to the Windows Neovim `init.lua`
--- 'pcall' to silently fail when running on Windows where the script doesn't exist
+-- When 'clean-init.lua' is saved, auto-sync it to the Windows Neovim 'init.lua'
+-- `pcall` to silently fail when running on Windows where the script doesn't exist
 pcall(require, 'scripts.windows-init-sync')
 
 ---------- PLUGINS -------------------------------------------------------------
@@ -121,18 +121,18 @@ require('which-key').setup {
 ---------- SIDEBAR -------------------------------------------------------------
 -- Create a read-only left sidebar (experimental)
 
--- File the sidebar will use: "sidebar" | "sidebar-lines" | "sidebar.txt"
-local sidebar_filename = "sidebar"
+-- File the sidebar will use: 'sidebar' | 'sidebar-lines' | 'sidebar.txt'
+local sidebar_filename = 'sidebar'
 
 -- Create the sidebar
 local function create_sidebar()
   -- Define the file to open in the sidebar
-  local sidebar_file = vim.fn.stdpath("config") .. "/" .. sidebar_filename
+  local sidebar_file = vim.fn.stdpath 'config' .. '/' .. sidebar_filename
 
   -- Close if already open
   for _, win in ipairs(vim.api.nvim_list_wins()) do
     local b = vim.api.nvim_win_get_buf(win)
-    if vim.api.nvim_buf_get_name(b):match(sidebar_filename .. "$") then
+    if vim.api.nvim_buf_get_name(b):match(sidebar_filename .. '$') then
       vim.api.nvim_win_close(win, true)
       return
     end
@@ -140,31 +140,29 @@ local function create_sidebar()
 
   -- Create a new buffer directly (false = unlisted, true = scratch)
   local buf = vim.fn.bufadd(sidebar_file)
-  
+
   -- Load buffer and configure it
   vim.fn.bufload(buf)
-  vim.bo[buf].buftype = "nofile"
-  vim.bo[buf].bufhidden = "wipe"
+  vim.bo[buf].buftype = 'nofile'
+  vim.bo[buf].bufhidden = 'wipe'
   vim.bo[buf].swapfile = false
 
-  -- Open the split natively 
+  -- Open the split natively
   -- 'false' prevents entering the window
   vim.api.nvim_open_win(buf, false, {
-    split = "left",
+    split = 'left',
     width = 30,
-    style = "minimal"
+    style = 'minimal',
   })
 end
 
 -- Create the sidebar by default, but after Neovim launches
-vim.api.nvim_create_autocmd("VimEnter", {
+vim.api.nvim_create_autocmd('VimEnter', {
   callback = function()
--- Only auto-open the sidebar if a file was passed at launch
-    if vim.fn.argc() > 0 then
-      create_sidebar()
-    end
+    -- Only auto-open the sidebar if a file was passed at launch
+    if vim.fn.argc() > 0 then create_sidebar() end
   end,
-  once = true
+  once = true,
 })
 
 ---------- KEYMAPS -------------------------------------------------------------
@@ -184,5 +182,4 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 vim.keymap.set('n', '<leader>n', function() vim.cmd.edit(vim.fn.stdpath 'config') end, { desc = 'neovim files' })
 
 -- Toggle the sidebar
-vim.keymap.set('n', '<leader>s', function() create_sidebar() end, {desc = "toggle sidebar"})
-
+vim.keymap.set('n', '<leader>s', function() create_sidebar() end, { desc = 'toggle sidebar' })
