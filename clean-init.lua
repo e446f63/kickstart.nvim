@@ -115,15 +115,13 @@ require('which-key').setup {
   spec = {
     -- Numbered list of current buffers
     { '<leader>b', group = 'buffers', expand = function() return require('which-key.extras').expand.buf() end },
-    -- Toggle sidebar on and off
-    -- { '<leader>s', function() create_sidebar() end, desc = "toggle sidebar" },
   },
 }
 
 ---------- SIDEBAR -------------------------------------------------------------
 -- Create a read-only left sidebar (experimental)
 
--- local sidebar_title = "Sidebar"
+-- File the sidebar will use: "sidebar" | "sidebar-lines" | "sidebar.txt"
 local sidebar_filename = "sidebar"
 
 -- Create the sidebar
@@ -134,7 +132,6 @@ local function create_sidebar()
   -- Close if already open
   for _, win in ipairs(vim.api.nvim_list_wins()) do
     local b = vim.api.nvim_win_get_buf(win)
-    -- if vim.api.nvim_buf_get_name(b):match(sidebar_title .. "|" .. sidebar_file .. "$") then
     if vim.api.nvim_buf_get_name(b):match(sidebar_filename .. "$") then
       vim.api.nvim_win_close(win, true)
       return
@@ -142,11 +139,8 @@ local function create_sidebar()
   end
 
   -- -- Create a new buffer directly (false = unlisted, true = scratch)
-  -- local buf = vim.api.nvim_create_buf(false, true)
   local buf = vim.fn.bufadd(sidebar_file)
   
-  -- -- Name buffer and configure it
-  -- vim.api.nvim_buf_set_name(buf, sidebar_title)
   -- Load buffer and configure it
   vim.fn.bufload(buf)
   vim.bo[buf].buftype = "nofile"
@@ -181,7 +175,8 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'quickfix l
 
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
-vim.keymap.set('n', '\\', '<cmd>Lexplore<CR>', { desc = 'File explorer (netrw)' })
+-- Open Netrw is sidebar (replaced by custom sidebar function)
+-- vim.keymap.set('n', '\\', '<cmd>Lexplore<CR>', { desc = 'File explorer (netrw)' })
 
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
