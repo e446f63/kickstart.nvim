@@ -24,7 +24,7 @@ end
 vim.o.number = true
 vim.o.relativenumber = true
 
-vim.o.mouse = 'a'
+vim.o.mouse = 'n'
 
 vim.schedule(function() vim.o.clipboard = 'unnamedplus' end)
 
@@ -121,13 +121,13 @@ require('which-key').setup {
 ---------- SIDEBAR -------------------------------------------------------------
 -- Create a read-only left sidebar (experimental)
 
--- File the sidebar will use: 'sidebar' | 'sidebar-lines' | 'sidebar.txt'
-local sidebar_filename = 'sidebar'
+-- File the sidebar will use: 'blank.txt' | 'lines.txt' | 'text.txt'
+local sidebar_filename = 'blank.txt'
 
 -- Create the sidebar
 local function create_sidebar()
   -- Define the file to open in the sidebar
-  local sidebar_file = vim.fn.stdpath 'config' .. '/' .. sidebar_filename
+  local sidebar_file = vim.fn.stdpath 'config' .. '/assets/sidebar/' .. sidebar_filename
 
   -- Close if already open
   for _, win in ipairs(vim.api.nvim_list_wins()) do
@@ -183,3 +183,5 @@ vim.keymap.set('n', '<leader>n', function() vim.cmd.edit(vim.fn.stdpath 'config'
 
 -- Toggle the sidebar
 vim.keymap.set('n', '<leader>s', function() create_sidebar() end, { desc = 'toggle sidebar' })
+
+-- vim: ts=2 sts=-1 sw=2 et
