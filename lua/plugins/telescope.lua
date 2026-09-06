@@ -4,9 +4,10 @@ NOTE:
 ==================== telescope                   ====================
 =====================================================================
 --]]
+-- See TODO block at EOF.
 
 return {
- { -- Fuzzy Finder (files, lsp, etc)
+  { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     -- By default, Telescope is included and acts as your picker for everything.
 
@@ -65,9 +66,9 @@ return {
         --
         defaults = {
           initial_mode = 'normal',
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
+          --   mappings = {
+          --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
+          --   },
         },
         pickers = {
           buffers = {
@@ -76,10 +77,10 @@ return {
               n = {
                 -- delete buffer directly from the picker
                 ['dd'] = 'delete_buffer',
-              }
-            }
+              },
+            },
           },
-          -- override my default to use 'insert' mode for these pickers
+          -- override default to use 'insert' mode for these pickers
           live_grep = { initial_mode = 'insert' },
           grep_string = { initial_mode = 'insert' },
           help_tags = { initial_mode = 'insert' },
@@ -110,35 +111,43 @@ return {
 
       -- This runs on LSP attach per buffer (see main LSP attach function in 'neovim/nvim-lspconfig' config for more info,
       -- it is better explained there). This allows easily switching between pickers if you prefer using something else!
+      -- NOTE: Neovim has default mappings for LSP now.
+      -- The default LSP gr… mappings include gd, gra, gri, grn, grr, grt, and grx; gO is also mapped to document symbols.
+      -- Therefore, many of the mappings below overrule Neovim's defaults so they are opened in Telescope pickers first.
+      -- <C-q> inside a Telescope picker puts the results into the 'quickfix' list, same as the default keymaps would.
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('telescope-lsp-attach', { clear = true }),
         callback = function(event)
           local buf = event.buf
+          local client = vim.lsp.get_client_by_id(event.data.client_id)
 
           -- Find references for the word under your cursor.
-          vim.keymap.set('n', 'grr', builtin.lsp_references, { buf = buf, desc = 'goto [r]eferences' })
+          vim.keymap.set('n', 'grr', builtin.lsp_references, { buf = buf, desc = 'goto [r]eferences (telescope)' })
 
           -- Jump to the implementation of the word under your cursor.
           -- Useful when your language has ways of declaring types without an actual implementation.
-          vim.keymap.set('n', 'gri', builtin.lsp_implementations, { buf = buf, desc = 'goto [i]mplementation' })
+          vim.keymap.set('n', 'gri', builtin.lsp_implementations, { buf = buf, desc = 'goto [i]mplementation (telescope)' })
 
           -- Jump to the definition of the word under your cursor.
           -- This is where a variable was first declared, or where a function is defined, etc.
-          -- To jump back, press <C-t>.
-          vim.keymap.set('n', 'grd', builtin.lsp_definitions, { buf = buf, desc = 'goto [d]efinition' })
+          -- To jump back, press <C-o> or <C-t>.
+          vim.keymap.set('n', 'grd', builtin.lsp_definitions, { buf = buf, desc = 'goto [d]efinition (telescope)' })
 
           -- Fuzzy find all the symbols in your current document.
           -- Symbols are things like variables, functions, types, etc.
-          vim.keymap.set('n', 'gO', builtin.lsp_document_symbols, { buf = buf, desc = '[O]pen document symbols' })
+          -- First ensure client supports 'documentSymbol' (guard against breaking 'gO' in 'help' and 'man' files)
+          if client and client:supports_method('textDocument/documentSymbol', buf) then
+            vim.keymap.set('n', 'gO', builtin.lsp_document_symbols, { buf = buf, desc = '[O]pen document symbols (telescope)' })
+          end
 
           -- Fuzzy find all the symbols in your current workspace.
           -- Similar to document symbols, except searches over your entire project.
-          vim.keymap.set('n', 'gW', builtin.lsp_dynamic_workspace_symbols, { buf = buf, desc = 'open [W]orkspace symbols' })
+          vim.keymap.set('n', 'gW', builtin.lsp_dynamic_workspace_symbols, { buf = buf, desc = 'open [W]orkspace symbols (telescope)' })
 
           -- Jump to the type of the word under your cursor.
           -- Useful when you're not sure what type a variable is and you want to see
           -- the definition of its *type*, not where it was *defined*.
-          vim.keymap.set('n', 'grt', builtin.lsp_type_definitions, { buf = buf, desc = 'goto [t]ype definition' })
+          vim.keymap.set('n', 'grt', builtin.lsp_type_definitions, { buf = buf, desc = 'goto [t]ype definition (telescope)' })
         end,
       })
 
@@ -168,5 +177,86 @@ return {
       -- Shortcut for searching your Neovim configuration files
       vim.keymap.set('n', '<leader>sn', function() builtin.find_files { cwd = vim.fn.stdpath 'config' } end, { desc = 'neovim files' })
     end,
-  }
+  },
 }
+
+--[[
+-- TODO:
+
+In Neovim 0.12, these are global defaults:
+
+  - grr → references
+  - gri → implementation
+  - grt → type definition
+  - gO → document symbols
+  - gra → code action
+  - grn → rename
+
+  The Telescope configuration deliberately reuses several standard keys so the operation stays familiar while results appear in a Telescope picker. grd and gW are additions from your
+  configuration.
+
+  A clean capability-aware version is:
+
+-------------------- Code Block Starts Here --------------------
+  callback = function(event)
+    local buf = event.buf
+    local client = vim.lsp.get_client_by_id(event.data.client_id)
+    if not client then
+      return
+    end
+
+    local function map_if_supported(method, lhs, rhs, desc)
+      if client:supports_method(method, buf) then
+        vim.keymap.set('n', lhs, rhs, {
+          buffer = buf,
+          desc = desc,
+        })
+      end
+    end
+
+    local methods = vim.lsp.protocol.Methods
+
+    map_if_supported(
+      methods.textDocument_references,
+      'grr',
+      builtin.lsp_references,
+      'goto references'
+    )
+
+    map_if_supported(
+      methods.textDocument_implementation,
+      'gri',
+      builtin.lsp_implementations,
+      'goto implementation'
+    )
+
+    map_if_supported(
+      methods.textDocument_definition,
+      'grd',
+      builtin.lsp_definitions,
+      'goto definition'
+    )
+
+    map_if_supported(
+      methods.textDocument_documentSymbol,
+      'gO',
+      builtin.lsp_document_symbols,
+      'open document symbols'
+    )
+
+    map_if_supported(
+      methods.workspace_symbol,
+      'gW',
+      builtin.lsp_dynamic_workspace_symbols,
+      'open workspace symbols'
+    )
+
+    map_if_supported(
+      methods.textDocument_typeDefinition,
+      'grt',
+      builtin.lsp_type_definitions,
+      'goto type definition'
+    )
+  end
+ 
+--]]
