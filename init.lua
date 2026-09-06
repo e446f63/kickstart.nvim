@@ -90,7 +90,7 @@ vim.o.number = true
 vim.o.relativenumber = true
 
 -- Enable mouse, but only in 'normal' mode (prevents infuriating cursor trackpad jumps)
-vim.o.mouse = 'n'
+vim.o.mouse = ''
 
 -- Don't show the mode since it's in the statusline, unless using 'default'.
 -- vim.o.showmode = false  -- disables it completely
