@@ -76,7 +76,7 @@ function M.setup()
       --
       -- enable codelens with a keymap to toggle on and off
       if client and client:supports_method('textDocument/codeLens', event.buf) then
-        map('<leader>tl', function () vim.lsp.codelens.enable(not vim.lsp.codelens.is_enabled { bufnr = event.buf }) end, 'codelens')
+        map('<leader>tl', function() vim.lsp.codelens.enable(not vim.lsp.codelens.is_enabled { bufnr = event.buf }) end, 'codelens')
       end
 
       -- Enable :help lsp-inline-completion to receive Copilot suggestions
@@ -85,7 +85,11 @@ function M.setup()
       if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlineCompletion, event.buf) then
         -- By default, inline completion is disabled because it can be a bit noisy, but can be toggled with the keymap below.
         -- vim.lsp.inline_completion.enable(true, { bufnr = event.buf })  -- Uncomment to enable by default.
-        map('<leader>ai', function() vim.lsp.inline_completion.enable(not vim.lsp.inline_completion.is_enabled { bufnr = event.buf }) end, 'Toggle Inline Completion')
+        map(
+          '<leader>ai',
+          function() vim.lsp.inline_completion.enable(not vim.lsp.inline_completion.is_enabled { bufnr = event.buf }) end,
+          'Toggle Inline Completion'
+        )
 
         -- Commenting out because 'accept inline completion' is now handled by <Tab> in `lua/plugins/blink.lua`
         -- vim.keymap.set(
@@ -94,14 +98,9 @@ function M.setup()
         --   vim.lsp.inline_completion.get,
         --   { desc = 'LSP: accept inline completion', buf = event.buf }
         -- )
-        vim.keymap.set(
-          'i',
-          '<C-G>',
-          vim.lsp.inline_completion.select,
-          { desc = 'LSP: switch inline completion', buf = event.buf }
-        )
+        vim.keymap.set('i', '<C-G>', vim.lsp.inline_completion.select, { desc = 'LSP: switch inline completion', buf = event.buf })
       end
-    end
+    end,
   })
 
   -- NOTE: Diagnostic Config
@@ -129,9 +128,7 @@ function M.setup()
     -- Auto open the float, so you can easily read the errors when jumping with `[d` and `]d`
     jump = {
       on_jump = function(diagnostic, bufnr)
-        if not diagnostic then
-          return
-        end
+        if not diagnostic then return end
         vim.diagnostic.open_float { bufnr = bufnr }
       end,
     },
@@ -163,7 +160,7 @@ function M.setup()
     copilot = {
       settings = {
         telemetry = {
-          telemetryLevel = "none"
+          telemetryLevel = 'none',
         },
       },
     },
@@ -188,7 +185,7 @@ function M.setup()
         -- actually use in this config, such as `LazySpec`, `MasonSettings`, and
         -- `blink.cmp.Config`.
         local function plugin_type_file(plugin, relpath)
-          local path = vim.fn.stdpath('data') .. '/lazy/' .. plugin .. '/' .. relpath
+          local path = vim.fn.stdpath 'data' .. '/lazy/' .. plugin .. '/' .. relpath
           return vim.uv.fs_stat(path) and path or nil
         end
 
@@ -214,15 +211,11 @@ function M.setup()
           plugin_type_file('blink.cmp', 'lua/blink/cmp/config/init.lua'),
           plugin_type_file('blink.cmp', 'lua/blink/cmp/config/types_partial.lua'),
         } do
-          if path then
-            table.insert(library, path)
-          end
+          if path then table.insert(library, path) end
         end
 
         local lua_settings = client.config.settings.Lua
-        if type(lua_settings) ~= 'table' then
-          lua_settings = {}
-        end
+        if type(lua_settings) ~= 'table' then lua_settings = {} end
 
         client.config.settings.Lua = vim.tbl_deep_extend('force', lua_settings, {
           runtime = {
