@@ -82,14 +82,14 @@ NOTE:
 
 --See `:help vim.o`. For more options, you can see `:help option-list`
 
--- Give pop-ups (like <S>-K) borders
+-- Give pop-ups (like <S-k>) borders
 vim.o.winborder = 'single'
 
 -- Make relative line numbers default
 vim.o.number = true
 vim.o.relativenumber = true
 
--- Enable mouse, but only in 'normal' mode (prevents infuriating cursor trackpad jumps)
+-- Disable mouse (prevents infuriating cursor trackpad jumps)
 vim.o.mouse = ''
 
 -- Don't show the mode since it's in the statusline, unless using 'default'.
@@ -186,7 +186,7 @@ NOTE:
 -- Clear highlights on search when pressing <Esc> in normal mode
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
--- Open diagnostic in quickfix list
+-- Open diagnostic in location (aka quickfix) list
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'quickfix list' })
 
 -- Exit terminal mode in the builtin terminal with <ESC><ESC>

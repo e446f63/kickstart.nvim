@@ -35,7 +35,10 @@ return {
       {
         -- Toggle NES on/off.
         '<leader>an',
-        function() require('sidekick.nes').toggle() end,
+        function()
+          require('sidekick.nes').toggle()
+          print('NES Enabled: ' .. tostring(require('sidekick.nes').enabled))
+        end,
         desc = 'Sidekick Toggle NES',
         mode = { 'n' },
       },

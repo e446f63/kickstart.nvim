@@ -18,6 +18,7 @@ vim.g.have_nerd_font = true
 -- Commented out until vscode-only blocks are integrated into this file
 -- otherwise, this will throw an error if opened in vscode because mini plugins
 -- don't exist yet.
+--
 -- if vim.g.vscode then
 --   require 'vscode-init'
 --   return

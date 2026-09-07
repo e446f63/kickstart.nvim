@@ -85,11 +85,10 @@ function M.setup()
       if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlineCompletion, event.buf) then
         -- By default, inline completion is disabled because it can be a bit noisy, but can be toggled with the keymap below.
         -- vim.lsp.inline_completion.enable(true, { bufnr = event.buf })  -- Uncomment to enable by default.
-        map(
-          '<leader>ai',
-          function() vim.lsp.inline_completion.enable(not vim.lsp.inline_completion.is_enabled { bufnr = event.buf }) end,
-          'Toggle Inline Completion'
-        )
+        map('<leader>ai', function()
+          vim.lsp.inline_completion.enable(not vim.lsp.inline_completion.is_enabled { bufnr = event.buf })
+          print('Inline Completion Enabled: ' .. tostring(vim.lsp.inline_completion.is_enabled { bufnr = event.buf }))
+        end, 'Toggle Inline Completion')
 
         -- Commenting out because 'accept inline completion' is now handled by <Tab> in `lua/plugins/blink.lua`
         -- vim.keymap.set(
